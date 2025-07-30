@@ -11,10 +11,18 @@ st.set_page_config(page_title="🍻 Fuzzy Drankspel", layout="centered")
 st.title("🍻 Fuzzy Drankspel")
 
 # Session state initiëren
-for key in ["vraag_index", "spelgestart", "vragenlijst", "actieve_specials"]:
-    if key not in st.session_state:
-        st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else []
+if "vraag_index" not in st.session_state:
+    st.session_state.vraag_index = 0
+if "spelgestart" not in st.session_state:
+    st.session_state.spelgestart = False
+if "vragenlijst" not in st.session_state:
+    st.session_state.vragenlijst = []
+if "actieve_specials" not in st.session_state:
+    st.session_state.actieve_specials = []
+if "gestarte_special_uids" not in st.session_state:
+    st.session_state.gestarte_special_uids = []
 
+        
 # Vaste vragen laden
 def load_standaard_vragen():
     try:
@@ -57,10 +65,7 @@ if not st.session_state.spelgestart:
 elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
 
-    if "gestarte_special_uids" not in st.session_state:
-    st.session_state.gestarte_special_uids = []
-
-
+    
     # Actieve specials updaten
     nieuwe_actieve_specials = []
     for s in st.session_state.actieve_specials:
