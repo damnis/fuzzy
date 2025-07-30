@@ -43,7 +43,7 @@ if not st.session_state.spelgestart:
 
             n_specials = max(1, aantal_vragen // 10)
             n_random = aantal_vragen // 2
-            n_standaard = aantal_vragen - n_specials * 2 - n_random
+            n_standaard = aantal_vragen - n_specials - n_random
 
             vragen = []
             vragen += random.sample(load_standaard_vragen(), min(n_standaard, len(load_standaard_vragen())))
