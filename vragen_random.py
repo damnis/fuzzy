@@ -12,7 +12,7 @@ def genereer_random_vraag(spelers):
         return "Iedereen drinkt een slok"
 
     speler = random.choice(spelers)
-    actie = random.choice([
+    acties = random.choice([
         f"{speler}, vertel een gênant verhaal of drink",
         f"{speler} en {random.choice([s for s in spelers if s != speler])} moeten tegelijk drinken",
         random.choice(acties).format(random.choice(landen)),
