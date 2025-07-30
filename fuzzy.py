@@ -41,7 +41,7 @@ if not st.session_state.spelgestart:
             st.session_state.spelgestart = True
             st.session_state.spelers = spelers
 
-            n_specials = max(1, aantal_vragen // 10)
+            n_specials = max(1, aantal_vragen // 5)
             n_random = aantal_vragen // 2
             n_standaard = aantal_vragen - n_specials - n_random
 
