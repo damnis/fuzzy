@@ -139,7 +139,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
             hacker_effect()
         if st.session_state.vraag_index % 15 == 0:
             rotate_warning()
-        run_timer(30)
+        run_timer(3)
 
     if st.button("➡️ Volgende vraag"):
         st.session_state.vraag_index += 1
