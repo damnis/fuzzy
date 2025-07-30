@@ -59,7 +59,7 @@ if not st.session_state.spelgestart:
             st.session_state.actieve_specials = []
             st.session_state.gestarte_special_uids = []
             st.session_state.spelgestart = True
-            st.rerun()
+#            st.rerun()
 
 
 # Spelbeurt
