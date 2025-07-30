@@ -1,5 +1,6 @@
 import streamlit as st
 import random
+import time
 
 from spelers import get_spelers
 from vragen_random import genereer_random_vraag
@@ -62,7 +63,7 @@ if not st.session_state.spelgestart:
             st.session_state.vraag_index = 0
             st.session_state.actieve_specials = []
             st.session_state.gestarte_special_uids = []
-            st.session_state.aftel_trigger = False
+            st.session_state.aftel_trigger = True
             st.session_state.spelgestart = True
             st.rerun()
 
@@ -100,7 +101,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
         nieuwe_special = vraag.copy()
         nieuwe_special["actief"] = False
-        nieuwe_special["rondes"] += 0
+        nieuwe_special["rondes"] += 1
         st.session_state.actieve_specials.append(nieuwe_special)
         st.session_state.gestarte_special_uids.append(uid)
 
@@ -130,9 +131,22 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         if st.session_state.vraag_index % 10 == 0:
             st.markdown("<div style='font-size:24px; color:red;'>⚡ Bliksemschicht! ⚡</div>", unsafe_allow_html=True)
         if st.session_state.vraag_index % 15 == 0:
-            st.markdown("<div style='transform: rotate(180deg);'>🤪 Alles op zijn kop!</div>", unsafe_allow_html=True)
+            st.markdown("""
+            <style>
+            body {
+                transform: rotate(180deg);
+            }
+            </style>""", unsafe_allow_html=True)
         if st.session_state.vraag_index % 7 == 0:
-            st.markdown("<div style='background-color: black; color: lime; padding: 10px;'>👾 Hacker attack incoming...</div>", unsafe_allow_html=True)
+            st.markdown("""
+            <style>
+            body {
+                background-color: black !important;
+                color: lime !important;
+            }
+            </style>
+            <div style='color: lime;'>👾 Hacker attack incoming...</div>
+            """, unsafe_allow_html=True)
 
     if is_quiz:
         st.markdown("#### 🎓 Moeilijke vraag:")
