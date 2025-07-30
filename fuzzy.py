@@ -72,7 +72,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if st.session_state.actieve_specials:
         st.markdown("### ⚠️ Actieve specials:")
         for s in st.session_state.actieve_specials:
-            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 0 else ''} over)")
+            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
 
     # Vraagdata
     is_special = isinstance(vraag, dict)
@@ -117,7 +117,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
             if uid not in bestaande_uids:
                 nieuwe_special = vraag.copy()
                 nieuwe_special["actief"] = False
-                nieuwe_special["rondes"] += 1
+                nieuwe_special["rondes"] += 0
                 st.session_state.actieve_specials.append(nieuwe_special)
 
         st.session_state.vraag_index += 1
