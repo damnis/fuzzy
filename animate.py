@@ -4,23 +4,19 @@ import time
 
 def show_bliksem():
     st.markdown("""
-    <style>
-    body::after {
-        content: "";
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        background: white;
-        animation: flits 0.2s ease-in-out;
-        z-index: 9999;
-    }
-    @keyframes flits {
-        0% { opacity: 0; }
-        50% { opacity: 0.9; }
-        80% { opacity: 0; }
-        100% { opacity: 1; }
-    }
-    </style>
+    <script>
+    const flash = document.createElement("div");
+    flash.style.position = "fixed";
+    flash.style.top = 0;
+    flash.style.left = 0;
+    flash.style.width = "100vw";
+    flash.style.height = "100vh";
+    flash.style.backgroundColor = "white";
+    flash.style.zIndex = 9999;
+    flash.style.opacity = 0.8;
+    document.body.appendChild(flash);
+    setTimeout(() => { document.body.removeChild(flash); }, 200);
+    </script>
     """, unsafe_allow_html=True)
 
 def show_vlammen():
