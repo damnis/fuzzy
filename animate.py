@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 import time
+from spelers import get_spelers
 
 # 🎈 Simpele werkende animaties
 
