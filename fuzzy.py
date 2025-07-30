@@ -61,7 +61,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     nieuwe_actieve_specials = []
     for s in st.session_state.actieve_specials:
         if s.get("actief", False):
-            s["rondes"] -= 1
+            s["rondes"] -= 0
         else:
             s["actief"] = True  # pas vanaf volgende beurt aftellen
         if s["rondes"] > 0:
