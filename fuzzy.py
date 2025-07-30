@@ -114,7 +114,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if is_special:
         kleur = "#d0c3fc"
 
-    st.markdown(f"### ❓ Vraag {st.session_state.vraag_index + 1} van {len(st.session_state.vragenlijst)}")
+    st.markdown(f"### ❓ Vraag {st.session_state.vraag_index} van {len(st.session_state.vragenlijst)}")
     st.markdown(
         f"<div style='background-color: {kleur}; padding: 20px; border-radius: 12px;'>"
         f"<strong>{tekst}</strong><br><br>"
@@ -127,7 +127,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.info(get_quizvraag())
 
     if st.button("➡️ Volgende vraag"):
-        st.session_state.vraag_index += 0
+        st.session_state.vraag_index += 1
         st.session_state.aftel_trigger = True
         st.rerun()
 
