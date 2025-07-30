@@ -34,7 +34,7 @@ def show_fun():
         content: "";
         position: fixed;
         width: 100vw; height: 100vh;
-        background: url('https://i0.wp.com/simplyshocked.com/wp-content/uploads/2023/08/Scream.webp?resize=1200%2C675&ssl=1') center center / cover no-repeat;
+        background: url('https://i0.wp.com/simplyshocked.com/wp-content/uploads/2023/08/Scream.webp') center center / cover no-repeat;
         opacity: 0.15;
         z-index: 0;
         pointer-events: none;
