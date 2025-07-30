@@ -75,6 +75,20 @@ if not st.session_state.spelgestart:
 # Spelbeurt
 elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
+    is_special = isinstance(vraag, dict)
+    uid = vraag.get("uid") if is_special else None
+    is_meermaals = is_special and vraag.get("rondes", 0) > 0
+    
+    # Voeg special direct toe zodat hij ook deze ronde zichtbaar is
+    if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
+        nieuwe_special = vraag.copy()
+        nieuwe_special["actief"] = False
+        nieuwe_special["rondes"] += 0  # niet +1
+        st.session_state.actieve_specials.append(nieuwe_special)
+        st.session_state.gestarte_special_uids.append(uid)
+
+    
+  #  vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
 
     # Specials aftellen, 1x per beurt
     if st.session_state.aftel_trigger:
@@ -97,12 +111,12 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     is_meermaals = is_special and vraag.get("rondes", 0) > 0
 
     # Special toevoegen indien nog niet gestart
-    if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
-        nieuwe_special = vraag.copy()
-        nieuwe_special["actief"] = False
-        nieuwe_special["rondes"] += 0
-        st.session_state.actieve_specials.append(nieuwe_special)
-        st.session_state.gestarte_special_uids.append(uid)
+#    if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
+#        nieuwe_special = vraag.copy()
+#        nieuwe_special["actief"] = False
+#        nieuwe_special["rondes"] += 0
+#        st.session_state.actieve_specials.append(nieuwe_special)
+#        st.session_state.gestarte_special_uids.append(uid)
 
     # Slokkenlogica
     slok = random.choices([1, 2, 3], weights=[0.4, 0.4, 0.2])[0]
