@@ -120,23 +120,23 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
 
     # ➡️ Volgende knop
     if st.button("➡️ Volgende vraag"):
-    # Special nog niet toegevoegd? Sla hem tijdelijk op
-    if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
-        st.session_state.pending_special = vraag.copy()
-
-    st.session_state.vraag_index += 1
-    st.rerun()
+        # Special nog niet toegevoegd? Sla hem tijdelijk op
+        if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
+            st.session_state.pending_special = vraag.copy()
+    
+        st.session_state.vraag_index += 1
+        st.rerun()
 
 # Voeg pending special toe ná rerun — exact 1 keer
-if "pending_special" in st.session_state:
-    pending = st.session_state.pending_special
-    if pending.get("uid") and pending["uid"] not in st.session_state.gestarte_special_uids:
-        pending["actief"] = False
-        pending["rondes"] += 0
-        st.session_state.actieve_specials.append(pending)
-        st.session_state.gestarte_special_uids.append(pending["uid"])
-    del st.session_state.pending_special
-
+    if "pending_special" in st.session_state:
+        pending = st.session_state.pending_special
+        if pending.get("uid") and pending["uid"] not in st.session_state.gestarte_special_uids:
+            pending["actief"] = False
+            pending["rondes"] += 0
+            st.session_state.actieve_specials.append(pending)
+            st.session_state.gestarte_special_uids.append(pending["uid"])
+        del st.session_state.pending_special
+    
 
 
 
