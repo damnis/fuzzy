@@ -6,6 +6,7 @@ from spelers import get_spelers
 from vragen_random import genereer_random_vraag
 from specials import genereer_special
 from quiz import get_quizvraag
+from animate import show_bliksem, hacker_effect, rotate_warning, run_timer
 
 # Pagina setup
 st.set_page_config(page_title="🍻 Fuzzy Drankspel", layout="centered")
@@ -128,25 +129,13 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
 
     # Animatie effecten
     if st.session_state.animatie_mode:
+        if st.session_state.vraag_index % 5 == 0:
+            show_bliksem()
         if st.session_state.vraag_index % 10 == 0:
-            st.markdown("<div style='font-size:24px; color:red;'>⚡ Bliksemschicht! ⚡</div>", unsafe_allow_html=True)
+            hacker_effect()
         if st.session_state.vraag_index % 15 == 0:
-            st.markdown("""
-            <style>
-            body {
-                transform: rotate(180deg);
-            }
-            </style>""", unsafe_allow_html=True)
-        if st.session_state.vraag_index % 7 == 0:
-            st.markdown("""
-            <style>
-            body {
-                background-color: black !important;
-                color: lime !important;
-            }
-            </style>
-            <div style='color: lime;'>👾 Hacker attack incoming...</div>
-            """, unsafe_allow_html=True)
+            rotate_warning()
+        run_timer(30)
 
     if is_quiz:
         st.markdown("#### 🎓 Moeilijke vraag:")
