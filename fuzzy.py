@@ -17,6 +17,7 @@ for key, default in {
     "vragenlijst": [],
     "actieve_specials": [],
     "gestarte_special_uids": [],
+    "aftel_trigger": False  # Trigger voor aftellen per beurt
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
@@ -58,23 +59,26 @@ if not st.session_state.spelgestart:
             st.session_state.vraag_index = 0
             st.session_state.actieve_specials = []
             st.session_state.gestarte_special_uids = []
-            st.session_state.spelgestart = True  # <- opgelost
+            st.session_state.aftel_trigger = False
+            st.session_state.spelgestart = True
             st.rerun()
 
 # Spelbeurt
 elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
 
-    # Specials activeren en aftellen
-    nieuwe_specials = []
-    for special in st.session_state.actieve_specials:
-        if special.get("actief", False):
-            special["rondes"] -= 1
-        else:
-            special["actief"] = True
-        if special["rondes"] > 0:
-            nieuwe_specials.append(special)
-    st.session_state.actieve_specials = nieuwe_specials
+    # Specials aftellen, 1x per beurt
+    if st.session_state.aftel_trigger:
+        nieuwe_specials = []
+        for special in st.session_state.actieve_specials:
+            if special.get("actief", False):
+                special["rondes"] -= 1
+            else:
+                special["actief"] = True
+            if special["rondes"] > 0:
+                nieuwe_specials.append(special)
+        st.session_state.actieve_specials = nieuwe_specials
+        st.session_state.aftel_trigger = False
 
     # Actieve specials tonen
     if st.session_state.actieve_specials:
@@ -124,6 +128,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
 
     if st.button("➡️ Volgende vraag"):
         st.session_state.vraag_index += 1
+        st.session_state.aftel_trigger = True
         st.rerun()
 
 # Einde
@@ -131,20 +136,6 @@ else:
     st.success("🎉 Het spel is afgelopen! Vergeet niet wat water te drinken 🙂")
     st.balloons()
     if st.button("🔁 Opnieuw beginnen"):
-        for key in ["vraag_index", "spelgestart", "vragenlijst", "actieve_specials", "gestarte_special_uids"]:
+        for key in ["vraag_index", "spelgestart", "vragenlijst", "actieve_specials", "gestarte_special_uids", "aftel_trigger"]:
             st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else []
         st.rerun()
-
-
-
-
-
-
-
-
-
-
-
-
-
-#w
