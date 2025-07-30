@@ -6,7 +6,7 @@ from vragen_random import genereer_random_vraag
 from specials import genereer_special
 from quiz import get_quizvraag
 
-# --- Configuratie ---
+# --- Pagina-instellingen ---
 st.set_page_config(page_title="🍻 Fuzzy Drankspel", layout="centered")
 st.title("🍻 Fuzzy Drankspel")
 
@@ -20,7 +20,7 @@ if "vragenlijst" not in st.session_state:
 if "actieve_specials" not in st.session_state:
     st.session_state.actieve_specials = []
 
-# --- Vragenbestand laden ---
+# --- Vaste vragen inlezen ---
 def load_standaard_vragen():
     try:
         with open("vragen_1.txt", "r", encoding="utf-8") as f:
@@ -28,11 +28,11 @@ def load_standaard_vragen():
     except:
         return []
 
-# --- Setup ---
+# --- Startinstellingen ---
 if not st.session_state.spelgestart:
     spelers = get_spelers()
     aantal_vragen = st.selectbox("📋 Aantal vragen", [20, 30, 50])
-    st.caption("Mix van vaste vragen, random vragen en specials (zoals virussen, quiz etc).")
+    st.caption("Mix van vaste vragen, random gegenereerde vragen en specials (virussen, quiz, opdrachten...)")
 
     if st.button("🎬 Start het spel"):
         if len(spelers) < 2:
@@ -59,39 +59,43 @@ if not st.session_state.spelgestart:
 # --- Spelronde ---
 elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
+    spelers = st.session_state.spelers
 
-    # ❗ Update actieve specials
+    # ❗ Specials bijwerken (aftellen)
     for s in st.session_state.actieve_specials:
         s["rondes"] -= 1
     st.session_state.actieve_specials = [s for s in st.session_state.actieve_specials if s["rondes"] > 0]
 
-    # 🎭 Toon actieve specials
+    # ⚠️ Toon actieve specials
     if st.session_state.actieve_specials:
         st.markdown("### ⚠️ Actieve specials:")
         for s in st.session_state.actieve_specials:
-            st.markdown(f"- {s['tekst']} ({s['rondes']} rondes over)")
+            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
 
-    # 🎲 Slokken berekenen
+    # 🎲 Slokkenberekening
     slok = random.choices([1, 2, 3], weights=[0.5, 0.3, 0.2])[0]
     mult = random.choices([1, 2, 3], weights=[0.5, 0.3, 0.2])[0]
     totaal = slok * mult
 
-    # 🎨 Kleur per zwaarte
-    kleur = "#d9ead3"  # groen
+    # 🎨 Stijl op basis van zwaarte
+    kleur = "#d9ead3"  # lichtgroen
     if totaal >= 7:
         kleur = "#ffcccc"  # rood
     elif totaal >= 4:
         kleur = "#fff2cc"  # geel
-    if isinstance(vraag, dict):
-        if vraag.get("type") in ["virus", "quiz", "opdracht", "stem"]:
-            kleur = "#d0c3fc"
 
-    # 🧠 QUIZ?
-    is_quiz = isinstance(vraag, dict) and vraag.get("type") == "quiz"
+    is_special = isinstance(vraag, dict)
+    if is_special:
+        if vraag.get("type") in ["virus", "quiz", "opdracht", "stem", "actie", "stilte"]:
+            kleur = "#d0c3fc"  # paarsblauw
 
-    # 🎯 Vraag tonen
+    # 🧠 Is dit een quizspecial?
+    is_quiz = is_special and vraag.get("type") == "quiz"
+
+    # ✅ Vraag tonen
     st.markdown(f"### ❓ Vraag {st.session_state.vraag_index + 1} van {len(st.session_state.vragenlijst)}")
-    tekst = vraag["tekst"] if isinstance(vraag, dict) else vraag
+    tekst = vraag["tekst"] if is_special else vraag
+
     st.markdown(
         f"<div style='background-color: {kleur}; padding: 20px; border-radius: 12px;'>"
         f"<strong>{tekst}</strong><br><br>"
@@ -100,21 +104,22 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         unsafe_allow_html=True
     )
 
-    # ❗ Special toevoegen aan actieve lijst
-    if isinstance(vraag, dict) and vraag.get("rondes", 0) > 1:
+    # ℹ️ Toon extra info over active special
+    if is_special and vraag.get("rondes", 0) >= 1 and vraag not in st.session_state.actieve_specials:
         st.session_state.actieve_specials.append(vraag)
+        if vraag["rondes"] > 1:
+            st.caption(f"🕒 Deze opdracht blijft nog {vraag['rondes']} rondes actief.")
 
-    # 🧠 Extra quizvraag tonen
+    # 🧠 Toon quizvraag als type 'quiz'
     if is_quiz:
         st.markdown("#### 🎓 Moeilijke vraag:")
         st.info(get_quizvraag())
 
-    # ➡️ Volgende
     if st.button("➡️ Volgende vraag"):
         st.session_state.vraag_index += 1
         st.rerun()
 
-# --- Einde ---
+# --- Einde spel ---
 else:
     st.success("🎉 Het spel is afgelopen! Vergeet niet wat water te drinken 😉")
     st.balloons()
@@ -124,21 +129,3 @@ else:
         st.session_state.vragenlijst = []
         st.session_state.actieve_specials = []
         st.rerun()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#w
