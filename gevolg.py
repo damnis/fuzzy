@@ -7,12 +7,12 @@ GEVOLG_VRAGEN = [
     {
         "vraag": "Kies kop of munt, verliezers drinken",
         "type": "actie",
-        "gevolg": lambda: st.success(f"🎲 Muntstuk valt op: {random.choice(['Kop', 'Munt'])}!")
+        "gevolg": lambda speler=None, andere=None: st.success(f"🎲 Muntstuk valt op: {random.choice(['Kop', 'Munt'])}!")
     },
     {
         "vraag": "Wie heeft het meeste geld op zak (contant)?",
         "type": "actie",
-        "gevolg": lambda: st.warning("💸 De rijkste geeft een rondje! Alle anderen drinken.")
+        "gevolg": lambda speler=None, andere=None: st.warning("💸 De rijkste geeft een rondje! Alle anderen drinken.")
     },
     {
         "vraag": "De kleinste speler neemt de slokken",
@@ -22,14 +22,11 @@ GEVOLG_VRAGEN = [
     }
 ]
 
-# Actieve gevolgen bijhouden (net als specials)
-if "actieve_gevolgen" not in st.session_state:
-    st.session_state.actieve_gevolgen = []
-
 # Gevolg direct tonen
-def toon_gevolg(vraag_item):
+
+def toon_gevolg(vraag_item, speler=None, andere=None):
     if callable(vraag_item.get("gevolg")):
-        vraag_item["gevolg"]()
+        vraag_item["gevolg"](speler, andere)
 
 # Voeg uitgesteld gevolg toe met rondeteller
 def plan_gevolg(vraag_item):
@@ -52,5 +49,14 @@ def verwerk_gevolgen():
     st.session_state.actieve_gevolgen = nieuwe
 
 # Losse functie om random gevolgvraag op te halen
-def genereer_gevolg_vraag():
-    return random.choice(GEVOLG_VRAGEN)
+def genereer_gevolg_vraag(spelers):
+    vraag_item = random.choice(GEVOLG_VRAGEN)
+    speler = random.choice(spelers)
+    andere = random.choice([s for s in spelers if s != speler]) if len(spelers) > 1 else "iemand anders"
+    if "{speler}" in vraag_item["vraag"]:
+        vraag_item = vraag_item.copy()
+        vraag_item["vraag"] = vraag_item["vraag"].format(speler=speler, andere=andere)
+    vraag_item["tekst"] = vraag_item["vraag"]  # voor uniform gebruik in main
+    vraag_item["speler"] = speler
+    vraag_item["andere"] = andere
+    return vraag_item
