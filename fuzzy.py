@@ -85,12 +85,6 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.session_state.actieve_specials = nieuwe_specials
         st.session_state.aftel_trigger = False
 
-    # Actieve specials tonen
-    if st.session_state.actieve_specials:
-        st.markdown("### ⚠️ Actieve specials:")
-        for s in st.session_state.actieve_specials:
-            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
-
     # Vraaginfo
     is_special = isinstance(vraag, dict)
     tekst = vraag["tekst"] if is_special else vraag
@@ -127,6 +121,16 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         f"</div>", unsafe_allow_html=True
     )
 
+    # Actieve specials tonen
+    if st.session_state.actieve_specials:
+        st.markdown("### ⚠️ Actieve specials:")
+        for s in st.session_state.actieve_specials:
+            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
+
+    if is_quiz:
+        st.markdown("#### 🎓 Moeilijke vraag:")
+        st.info(get_quizvraag())
+
     # Animatie effecten
     if st.session_state.animatie_mode:
         if st.session_state.vraag_index % 5 == 0:
@@ -136,10 +140,6 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         if st.session_state.vraag_index % 15 == 0:
             rotate_warning()
         run_timer(30)
-
-    if is_quiz:
-        st.markdown("#### 🎓 Moeilijke vraag:")
-        st.info(get_quizvraag())
 
     if st.button("➡️ Volgende vraag"):
         st.session_state.vraag_index += 1
