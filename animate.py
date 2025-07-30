@@ -118,8 +118,8 @@ def play_random_effect():
     opties = [
         show_balloons,
         show_sneeuw,
-        lambda: show_big_popup(spelers),
-        show_popup(spelers),
+        lambda: show_big_popup,
+        show_popup,
         show_scare,
         show_fun
     ]
