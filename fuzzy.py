@@ -40,8 +40,7 @@ if not st.session_state.spelgestart:
     st.caption("Mix van vaste vragen, random gegenereerde vragen en specials.")
 
     st.session_state.animatie_mode = st.checkbox("🎆 Zet animatie-modus aan voor extra chaos")
-    if animatie_aan:
-        play_random_effect(spelers)
+   
         
     if st.button("🎮 Start het spel"):
         if len(spelers) < 2:
