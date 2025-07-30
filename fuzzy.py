@@ -40,7 +40,9 @@ if not st.session_state.spelgestart:
     st.caption("Mix van vaste vragen, random gegenereerde vragen en specials.")
 
     st.session_state.animatie_mode = st.checkbox("🎆 Zet animatie-modus aan voor extra chaos")
-
+    if animatie_aan:
+        play_random_effect(spelers)
+        
     if st.button("🎮 Start het spel"):
         if len(spelers) < 2:
             st.warning("Voer minstens twee spelers in om te beginnen.")
@@ -133,7 +135,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
 
     # Animatie effecten (vanaf vraag 2 pas)
     if random.randint(1, 5) == 1:
-        play_random_effect(spelers)
+        play_random_effect()
 
 
     if st.button("➡️ Volgende vraag"):
