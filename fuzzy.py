@@ -133,7 +133,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.info(get_quizvraag())
 
     # Animatie effecten (vanaf vraag 2 pas)
-    if random.randint(1, 5) == 1:
+    if random.randint(1, 3) == 1:
         play_random_effect()
 
 
