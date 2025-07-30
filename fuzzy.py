@@ -132,7 +132,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         pending = st.session_state.pending_special
         if pending.get("uid") and pending["uid"] not in st.session_state.gestarte_special_uids:
             pending["actief"] = False
-            pending["rondes"] += 0
+            pending["rondes"] += 1
             st.session_state.actieve_specials.append(pending)
             st.session_state.gestarte_special_uids.append(pending["uid"])
         del st.session_state.pending_special
