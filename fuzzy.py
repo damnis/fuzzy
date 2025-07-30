@@ -72,7 +72,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if st.session_state.actieve_specials:
         st.markdown("### ⚠️ Actieve specials:")
         for s in st.session_state.actieve_specials:
-            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
+            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != +1 else ''} over)")
 
     # Vraagdata
     is_special = isinstance(vraag, dict)
