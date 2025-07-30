@@ -131,8 +131,8 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.markdown("#### 🎓 Moeilijke vraag:")
         st.info(get_quizvraag())
 
-    # Animatie effecten
-    if st.session_state.animatie_mode:
+    # Animatie effecten (vanaf vraag 2 pas)
+    if st.session_state.animatie_mode and st.session_state.vraag_index >= 2:
         if st.session_state.vraag_index % 5 == 0:
             show_bliksem()
         if st.session_state.vraag_index % 10 == 0:
@@ -144,7 +144,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if st.button("➡️ Volgende vraag"):
         st.session_state.vraag_index += 1
         st.session_state.aftel_trigger = True
-        st.rerun()
+        st.experimental_rerun()
 
 # Einde
 else:
@@ -156,4 +156,4 @@ else:
             "gestarte_special_uids", "aftel_trigger", "animatie_mode"
         ]:
             st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else []
-        st.rerun()
+        st.experimental_rerun()
