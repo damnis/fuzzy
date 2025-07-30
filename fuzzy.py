@@ -9,7 +9,6 @@ from quiz import toon_quiz_met_antwoord
 from animate import play_random_effect
 from gevolg import genereer_gevolg_vraag, plan_gevolg, verwerk_gevolgen, toon_gevolg
 
-
 # Pagina setup
 st.set_page_config(page_title="🍻 Fuzzy Drankspel", layout="centered")
 st.title("🍻 Fuzzy Drankspel")
@@ -22,7 +21,8 @@ for key, default in {
     "actieve_specials": [],
     "gestarte_special_uids": [],
     "aftel_trigger": False,
-    "animatie_mode": False
+    "animatie_mode": False,
+    "actieve_gevolgen": []
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
@@ -42,8 +42,7 @@ if not st.session_state.spelgestart:
     st.caption("Mix van vaste vragen, random gegenereerde vragen en specials.")
 
     st.session_state.animatie_mode = st.checkbox("🎆 Zet animatie-modus aan voor extra chaos")
-   
-        
+
     if st.button("🎮 Start het spel"):
         if len(spelers) < 2:
             st.warning("Voer minstens twee spelers in om te beginnen.")
@@ -52,9 +51,8 @@ if not st.session_state.spelgestart:
             vragen = []
             st.session_state.spelers = spelers
 
-
             while len(vragen) < aantal_vragen:
-                keuze = random.choice(["standaard", "random", "special"])
+                keuze = random.choice(["standaard", "random", "special", "gevolg"])
                 if keuze == "standaard" and standaard:
                     vraag = random.choice(standaard)
                     standaard.remove(vraag)
@@ -63,6 +61,8 @@ if not st.session_state.spelgestart:
                     vragen.append(genereer_random_vraag(spelers))
                 elif keuze == "special":
                     vragen.append(genereer_special(spelers))
+                elif keuze == "gevolg":
+                    vragen.append(genereer_gevolg_vraag(spelers))
 
             random.shuffle(vragen)
             st.session_state.vragenlijst = vragen
@@ -70,6 +70,7 @@ if not st.session_state.spelgestart:
             st.session_state.actieve_specials = []
             st.session_state.gestarte_special_uids = []
             st.session_state.aftel_trigger = True
+            st.session_state.actieve_gevolgen = []
             st.session_state.spelgestart = True
             st.rerun()
 
@@ -86,18 +87,6 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         andere = random.choice([s for s in spelers if s != speler]) if len(spelers) > 1 else "iemand anders"
         vraag = vraag.format(speler=speler, andere=andere)
 
-    
-    # Voeg special direct toe zodat hij ook deze ronde zichtbaar is
-    if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
-        nieuwe_special = vraag.copy()
-        nieuwe_special["actief"] = False
-        nieuwe_special["rondes"] += 0  # niet +1
-        st.session_state.actieve_specials.append(nieuwe_special)
-        st.session_state.gestarte_special_uids.append(uid)
-
-    
-  #  vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
-
     # Specials aftellen, 1x per beurt
     if st.session_state.aftel_trigger:
         nieuwe_specials = []
@@ -111,6 +100,9 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.session_state.actieve_specials = nieuwe_specials
         st.session_state.aftel_trigger = False
 
+    # Gevolgen verwerken
+    verwerk_gevolgen()
+
     # Vraaginfo
     is_special = isinstance(vraag, dict)
     tekst = vraag["tekst"] if is_special else vraag
@@ -118,6 +110,17 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     is_quiz = is_special and vraag.get("type") == "quiz"
     is_meermaals = is_special and vraag.get("rondes", 0) > 0
 
+    if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
+        nieuwe_special = vraag.copy()
+        nieuwe_special["actief"] = False
+        st.session_state.actieve_specials.append(nieuwe_special)
+        st.session_state.gestarte_special_uids.append(uid)
+
+    # Gevolgvraag uitvoeren
+    if is_special and vraag.get("type") == "actie":
+        toon_gevolg(vraag)
+    elif is_special and vraag.get("type") == "uitgesteld":
+        plan_gevolg(vraag)
 
     # Slokkenlogica
     slok = random.choices([1, 2, 3], weights=[0.4, 0.4, 0.2])[0]
@@ -145,14 +148,12 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.markdown("### ⚠️ Actieve specials:")
         for s in st.session_state.actieve_specials:
             st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
-    
+
     if is_quiz:
         toon_quiz_met_antwoord()
 
-    
     if st.session_state.animatie_mode and random.randint(1, 3) == 1:
         play_random_effect(st.session_state.spelers)
-
 
     if st.button("➡️ Volgende vraag"):
         st.session_state.vraag_index += 1
@@ -166,7 +167,7 @@ else:
     if st.button("🔁 Opnieuw beginnen"):
         for key in [
             "vraag_index", "spelgestart", "vragenlijst", "actieve_specials",
-            "gestarte_special_uids", "aftel_trigger", "animatie_mode"
+            "gestarte_special_uids", "aftel_trigger", "animatie_mode", "actieve_gevolgen"
         ]:
             st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else []
         st.rerun()
