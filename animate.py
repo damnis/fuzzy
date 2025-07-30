@@ -113,18 +113,18 @@ def show_fun():
     """, unsafe_allow_html=True)
 
 # 🔀 Random animatie kiezen
-opties = [
-    show_balloons,
-    show_sneeuw,
-    lambda: show_big_popup(spelers),
-    lambda: show_popup(spelers),
-    show_scare,
-    lambda: show_fun()
-]
-effect = random.choice(opties)
-if callable(effect):
-    effect()
-else:
-    st.warning("Er ging iets mis met de animatie.")
-
+def play_random_effect(spelers=None):
+    opties = [
+        show_balloons,
+        show_sneeuw,
+        lambda: show_big_popup(spelers),
+        lambda: show_popup(spelers),
+        show_scare,
+        lambda: show_fun()
+    ]
+    effect = random.choice(opties)
+    if callable(effect):
+        effect()
+    else:
+        st.warning("Er ging iets mis met de animatie.")
 
