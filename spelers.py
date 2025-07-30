@@ -1,0 +1,5 @@
+
+
+
+
+# vaste spelers
