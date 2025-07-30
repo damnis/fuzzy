@@ -33,7 +33,7 @@ def show_fun():
         content: "";
         position: fixed;
         width: 100vw; height: 100vh;
-        background: url('https://i.imgur.com/Jj3dWBv.gif') center center / cover no-repeat;
+        background: url('https://images.app.goo.gl/gH84SVpCwgpqiTT46') center center / cover no-repeat;
         opacity: 0.15;
         z-index: 0;
         pointer-events: none;
