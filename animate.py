@@ -11,6 +11,56 @@ def show_balloons():
 def show_sneeuw():
     st.snow()
 
+
+def show_big_popup(spelers=None):
+    berichten = [
+        "Chaos incoming!",
+        "Laat je drankje niet vallen!",
+        "{speler} morste bijna alles...",
+        "{andere} lijkt nu al zat...",
+        "Iemand moet de kamer luchten!",
+        "Gekke vibes incoming!",
+        "{speler} en {andere} moeten elkaar aankijken zonder te lachen",
+        "Er hangt onweer in de lucht...",
+        "Wie gooide er met chips?!"
+    ]
+    iconen = ["🎉", "⚡", "😱", "😂", "🔥", "🍻", "🌀"]
+    speler = random.choice(spelers) if spelers else "iemand"
+    andere = random.choice([s for s in spelers if s != speler]) if spelers and len(spelers) > 1 else "een ander"
+
+    bericht = random.choice(berichten).format(speler=speler, andere=andere)
+    icoon = random.choice(iconen)
+
+    st.markdown(f"""
+    <div style='
+        position: fixed;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff8e1;
+        padding: 20px 40px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        z-index: 9999;
+        font-size: 28px;
+        text-align: center;
+        animation: fadeinout 3s forwards;
+    '>
+        {icoon} {bericht}
+    </div>
+
+    <style>
+    @keyframes fadeinout {{
+        0% {{ opacity: 0; }}
+        10% {{ opacity: 1; }}
+        90% {{ opacity: 1; }}
+        100% {{ opacity: 0; }}
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
+
+
 def show_popup(spelers=None):
     berichten = [
         "Chaos incoming!",
@@ -68,6 +118,7 @@ def play_random_effect():
     opties = [
         show_balloons,
         show_sneeuw,
+        lambda: show_big_popup
         show_popup,
         show_scare,
         show_fun
