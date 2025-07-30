@@ -144,7 +144,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if st.button("➡️ Volgende vraag"):
         st.session_state.vraag_index += 1
         st.session_state.aftel_trigger = True
-        st.experimental_rerun()
+        st.rerun()
 
 # Einde
 else:
@@ -156,4 +156,4 @@ else:
             "gestarte_special_uids", "aftel_trigger", "animatie_mode"
         ]:
             st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else []
-        st.experimental_rerun()
+        st.rerun()
