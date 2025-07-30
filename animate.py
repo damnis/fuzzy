@@ -16,7 +16,7 @@ def show_popup(message="Chaos incoming!", icon="🎉"):
 # 😱 Korte scare afbeelding (heel even zichtbaar)
 def show_scare():
     scares = [
-        "https://cdn.pixabay.com/animation/2021/03/21/09/19/09-19-28-936_512.gif",  # bijv. donkere ogen
+        "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbjRzZGZtendleTVyMGtqbDN0Z3htMWJ5MG8xN21meXJsaWFubzd4NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZO7IokFpImRdMDUGq6/giphy.gif",  # bijv. donkere ogen
         "https://cdn.pixabay.com/animation/2021/10/31/18/22/18-22-58-455_512.gif",  # mistig gezicht
         "https://cdn.pixabay.com/animation/2022/05/31/17/17/17-17-11-632_512.gif"   # schaduw beweegt
     ]
