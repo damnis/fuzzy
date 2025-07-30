@@ -6,7 +6,7 @@ from spelers import get_spelers
 from vragen_random import genereer_random_vraag
 from specials import genereer_special
 from quiz import get_quizvraag
-from animate import show_bliksem, hacker_effect, rotate_warning, show_rook, show_vlammen, show_glitch
+from animate import play_random_effect
 
 # Pagina setup
 st.set_page_config(page_title="🍻 Fuzzy Drankspel", layout="centered")
