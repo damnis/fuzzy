@@ -79,15 +79,15 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
 
     # Nieuwe special activeren, maar pas NA het tonen
     if is_meermaals:
-        def voeg_special_toe_later():
-            bestaande_uids = [s["uid"] for s in st.session_state.actieve_specials if "uid" in s]
-            if vraag.get("uid") not in bestaande_uids:
+        bestaande_uids = [s["uid"] for s in st.session_state.actieve_specials if "uid" in s]
+        if vraag.get("uid") not in bestaande_uids:
+            def voeg_special_toe_later():
                 special = vraag.copy()
                 special["actief"] = False
-                special["rondes"] += 1  # correctie: eerste beurt telt nog niet af
+                special["rondes"] += 1  # correctie: pas aftellen vanaf volgende beurt
                 st.session_state.actieve_specials.append(special)
-        st.session_state["voeg_special_toe"] = voeg_special_toe_later
-    
+            st.session_state["voeg_special_toe"] = voeg_special_toe_later
+
 
     # Slokken
     slok = random.choices([1, 2, 3], weights=[0.4, 0.4, 0.2])[0]
