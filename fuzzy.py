@@ -78,6 +78,13 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     is_special = isinstance(vraag, dict)
     uid = vraag.get("uid") if is_special else None
     is_meermaals = is_special and vraag.get("rondes", 0) > 0
+
+    if isinstance(vraag, str) and ("{speler}" in vraag or "{andere}" in vraag):
+        spelers = st.session_state.spelers
+        speler = random.choice(spelers)
+        andere = random.choice([s for s in spelers if s != speler]) if len(spelers) > 1 else "iemand anders"
+        vraag = vraag.format(speler=speler, andere=andere)
+
     
     # Voeg special direct toe zodat hij ook deze ronde zichtbaar is
     if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
