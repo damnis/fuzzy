@@ -17,7 +17,8 @@ def show_bliksem():
     @keyframes flits {
         0% { opacity: 0; }
         50% { opacity: 0.9; }
-        100% { opacity: 0; }
+        80% { opacity: 0; }
+        100% { opacity: 1; }
     }
     </style>
     """, unsafe_allow_html=True)
