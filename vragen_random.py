@@ -1,5 +1,30 @@
- # Simpele vraaggeneratoren
-    landen = ["Rusland", Frankrijk", "Thailand", "Italië", "Canada"]
+import random
+
+landen = ["Frankrijk", "Japan", "Canada", "Rusland", "Thailand", "België", "Spanje"]
+acties = [
+    "Wie nog nooit in {} is geweest",
+    "Wie ooit in {} is verdwaald",
+    "Wie ooit meer dan €100 heeft uitgegeven in {}"
+]
+
+def genereer_random_vraag(spelers):
+    if not spelers:
+        return "Iedereen drinkt een slok"
+
+    speler = random.choice(spelers)
+    actie = random.choice([
+        f"{speler}, vertel een gênant verhaal of drink",
+        f"{speler} en {random.choice([s for s in spelers if s != speler])} moeten tegelijk drinken",
+        random.choice(acties).format(random.choice(landen)),
+    ])
+    return actie
+
+
+
+
+
+# Simpele vraaggeneratoren
+    landen = ["Rusland", "Frankrijk", "Thailand", "Italië", "Canada", "België", "Spanje"]
     acties = [
         f"Wie nog nooit in {random.choice(landen)} is geweest",
         f"{speler}, geef een compliment aan iemand of drink",
