@@ -6,7 +6,7 @@ from spelers import get_spelers
 from vragen_random import genereer_random_vraag
 from specials import genereer_special
 from quiz import get_quizvraag
-from animate import show_bliksem, hacker_effect, rotate_warning, run_timer
+from animate import show_bliksem, hacker_effect, rotate_warning, show_rook, show_vlammen, show_glitch
 
 # Pagina setup
 st.set_page_config(page_title="🍻 Fuzzy Drankspel", layout="centered")
@@ -96,7 +96,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
         nieuwe_special = vraag.copy()
         nieuwe_special["actief"] = False
-        nieuwe_special["rondes"] += 1
+        nieuwe_special["rondes"] += 0
         st.session_state.actieve_specials.append(nieuwe_special)
         st.session_state.gestarte_special_uids.append(uid)
 
@@ -136,10 +136,15 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         if st.session_state.vraag_index % 5 == 0:
             show_bliksem()
         if st.session_state.vraag_index % 10 == 0:
-            hacker_effect()
+            show_vlammen()
         if st.session_state.vraag_index % 15 == 0:
+            show_rook()
+        if st.session_state.vraag_index % 20 == 0:
+            show_glitch()
+        if st.session_state.vraag_index % 25 == 0:
+            hacker_effect()
+        if st.session_state.vraag_index % 30 == 0:
             rotate_warning()
-        run_timer(3)
 
     if st.button("➡️ Volgende vraag"):
         st.session_state.vraag_index += 1
