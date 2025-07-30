@@ -116,8 +116,8 @@ def show_fun():
 opties = [
     show_balloons,
     show_sneeuw,
+    lambda: show_big_popup(spelers),
     lambda: show_popup(spelers),
-    show_popup(spelers),
     show_scare,
     lambda: show_fun()
 ]
