@@ -132,7 +132,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.info(get_quizvraag())
 
     # Animatie effecten (vanaf vraag 2 pas)
-    if st.session_state.animatie_mode and st.session_state.vraag_index >= 2:
+    if st.session_state.animatie_mode and st.session_state.vraag_index >= 1:
         if st.session_state.vraag_index % 5 == 0:
             show_bliksem()
         if st.session_state.vraag_index % 10 == 0:
