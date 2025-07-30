@@ -16,7 +16,7 @@ def show_popup(message="Chaos incoming!", icon="🎉"):
 # 😱 Korte scare afbeelding (heel even zichtbaar)
 def show_scare():
     scares = [
-        "https://images.app.goo.gl/WSGngUHBRqZPp96F7",
+        "https://tenor.com/nl/view/spooky's-jumpscare-mansion-ringu-explosion-ringu-specimen-4-gif-1297734078095087124",
         "https://images.app.goo.gl/DHamEivoTZKtsPww9",
         "https://images.app.goo.gl/iXiKysdqtMMc2X8D8"
     ]
