@@ -15,8 +15,14 @@ def show_popup(message="Chaos incoming!", icon="🎉"):
 
 # 😱 Korte scare afbeelding (heel even zichtbaar)
 def show_scare():
-    st.image("https://i.imgur.com/OYVpe2W.gif", use_column_width=True)
-    time.sleep(1)
+    scares = [
+        "https://i.imgur.com/OYVpe2W.gif",
+        "https://i.imgur.com/EzXrSk2.gif",
+        "https://i.imgur.com/lYgxA1M.gif"
+    ]
+    scare_url = random.choice(scares)
+    st.image(scare_url, use_container_width=True)
+    time.sleep(3)
     st.empty()
 
 # 🤪 Grappige achtergrond (blijft tijdelijk zichtbaar)
