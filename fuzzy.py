@@ -133,8 +133,11 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.info(get_quizvraag())
 
     # Animatie effecten (vanaf vraag 2 pas)
+#    if st.session_state.vraag_index % random.randint(3, 6) == 0:
+ #       play_random_effect(st.session_state.spelers)
+
     if random.randint(1, 3) == 1:
-        play_random_effect()
+        play_random_effect(st.session_state.spelers)
 
 
     if st.button("➡️ Volgende vraag"):
