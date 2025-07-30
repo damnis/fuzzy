@@ -17,8 +17,8 @@ def show_popup(message="Chaos incoming!", icon="🎉"):
 def show_scare():
     scares = [
         "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbjRzZGZtendleTVyMGtqbDN0Z3htMWJ5MG8xN21meXJsaWFubzd4NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZO7IokFpImRdMDUGq6/giphy.gif",  # bijv. donkere ogen
-        "https://cdn.pixabay.com/animation/2021/10/31/18/22/18-22-58-455_512.gif",  # mistig gezicht
-        "https://cdn.pixabay.com/animation/2022/05/31/17/17/17-17-11-632_512.gif"   # schaduw beweegt
+        "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExc3JpbzhyNXZicHhxcm5veTdkN2RoOHN2cGd1dDc4anMxcHliYjB0cyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/4nlLsagDaNTtRxWGkX/giphy.gif",  # mistig gezicht
+        "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3FvOHJpc3V4OHkzNzhmNWkwZ2hpeHJwZWZoazVydnZxcXpkcTNpdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/28aGE5xerXkbK/giphy.gif"   # schaduw beweegt
     ]
     scare_url = random.choice(scares)
     st.image(scare_url, use_container_width=True)
