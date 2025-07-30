@@ -58,7 +58,9 @@ if not st.session_state.spelgestart:
             st.session_state.vraag_index = 0
             st.session_state.actieve_specials = []
             st.session_state.gestarte_special_uids = []
-            st.rerun()
+            st.session_state.spelgestart = True
+            st.experimental_rerun()
+
 
 # Spelbeurt
 elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
