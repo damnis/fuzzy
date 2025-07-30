@@ -5,7 +5,7 @@ import time
 from spelers import get_spelers
 from vragen_random import genereer_random_vraag
 from specials import genereer_special
-from quiz import get_quizvraag
+from quiz import toon_quiz_met_antwoord
 from animate import play_random_effect
 
 # Pagina setup
@@ -151,10 +151,14 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.markdown("### ⚠️ Actieve specials:")
         for s in st.session_state.actieve_specials:
             st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
-
+    
     if is_quiz:
-        st.markdown("#### 🎓 Moeilijke vraag:")
-        st.info(get_quizvraag())
+        toon_quiz_met_antwoord()
+
+    
+#    if is_quiz:
+#        st.markdown("#### 🎓 Moeilijke vraag:")
+#        st.info(get_quizvraag())
 
     if st.session_state.animatie_mode and random.randint(1, 3) == 1:
         play_random_effect(st.session_state.spelers)
