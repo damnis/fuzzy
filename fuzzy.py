@@ -6,20 +6,16 @@ from vragen_random import genereer_random_vraag
 from specials import genereer_special
 from quiz import get_quizvraag
 
+# Pagina setup
 st.set_page_config(page_title="🍻 Fuzzy Drankspel", layout="centered")
 st.title("🍻 Fuzzy Drankspel")
 
-# Init state
-if "vraag_index" not in st.session_state:
-    st.session_state.vraag_index = 0
-if "spelgestart" not in st.session_state:
-    st.session_state.spelgestart = False
-if "vragenlijst" not in st.session_state:
-    st.session_state.vragenlijst = []
-if "actieve_specials" not in st.session_state:
-    st.session_state.actieve_specials = []
+# Session state initiëren
+for key in ["vraag_index", "spelgestart", "vragenlijst", "actieve_specials"]:
+    if key not in st.session_state:
+        st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else []
 
-# Functie: vragen inlezen
+# Vaste vragen laden
 def load_standaard_vragen():
     try:
         with open("vragen_1.txt", "r", encoding="utf-8") as f:
@@ -37,36 +33,31 @@ if not st.session_state.spelgestart:
         if len(spelers) < 2:
             st.warning("Voer minstens twee spelers in om te beginnen.")
         else:
-            st.session_state.spelgestart = True
-            st.session_state.spelers = spelers
-
-            vragen = []
             standaard = load_standaard_vragen()
+            vragen = []
+
             while len(vragen) < aantal_vragen:
                 keuze = random.choice(["standaard", "random", "special"])
                 if keuze == "standaard" and standaard:
-                    vragen.append(standaard.pop(random.randrange(len(standaard))))
+                    vragen.append(random.choice(standaard))
+                    standaard.remove(vragen[-1])
                 elif keuze == "random":
                     vragen.append(genereer_random_vraag(spelers))
                 elif keuze == "special":
-                    s = genereer_special(spelers)
-                    if isinstance(s, dict) and s.get("rondes", 0) >= 1:
-                        s["rondes"] += 1  # fix: 1 extra voor correcte aftelling
-                        s["actief"] = False
-                        st.session_state.actieve_specials.append(s)
-                    vragen.append(s)
-            
+                    vragen.append(genereer_special(spelers))
+
             random.shuffle(vragen)
             st.session_state.vragenlijst = vragen
             st.session_state.vraag_index = 0
+            st.session_state.actieve_specials = []
+            st.session_state.spelgestart = True
             st.rerun()
 
-# Spelronde
+# Spelbeurt
 elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
-    spelers = st.session_state.spelers
 
-    # Update specials
+    # Specials aftellen (pas na eerste activatie)
     for s in st.session_state.actieve_specials:
         if s.get("actief", False):
             s["rondes"] -= 1
@@ -74,31 +65,40 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
             s["actief"] = True
     st.session_state.actieve_specials = [s for s in st.session_state.actieve_specials if s["rondes"] > 0]
 
-    # Toon actieve specials
+    # Actieve specials tonen
     if st.session_state.actieve_specials:
         st.markdown("### ⚠️ Actieve specials:")
         for s in st.session_state.actieve_specials:
             st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
+
+    # Vraaggegevens ophalen
+    is_special = isinstance(vraag, dict)
+    tekst = vraag["tekst"] if is_special else vraag
+    is_quiz = is_special and vraag.get("type") == "quiz"
+    is_meermaals = is_special and vraag.get("rondes", 0) > 0
+
+    # Nieuwe special activeren?
+    if is_meermaals and vraag not in st.session_state.actieve_specials:
+        special = vraag.copy()
+        special["actief"] = False  # wordt pas aftellen vanaf volgende ronde
+        special["rondes"] += 1     # correctie: pas volgende beurt aftellen
+        st.session_state.actieve_specials.append(special)
 
     # Slokken
     slok = random.choices([1, 2, 3], weights=[0.5, 0.3, 0.2])[0]
     mult = random.choices([1, 2, 3], weights=[0.5, 0.3, 0.2])[0]
     totaal = slok * mult
 
-    # Stijl
-    kleur = "#d9ead3"
+    # Kleuren
+    kleur = "#d9ead3"  # groen
     if totaal >= 7:
-        kleur = "#ffcccc"
+        kleur = "#ffcccc"  # rood
     elif totaal >= 4:
-        kleur = "#fff2cc"
+        kleur = "#fff2cc"  # geel
+    if is_special:
+        kleur = "#d0c3fc"  # paarsblauw
 
-    is_special = isinstance(vraag, dict)
-    if is_special and vraag.get("type") in ["virus", "quiz", "opdracht", "stem", "actie", "stilte"]:
-        kleur = "#d0c3fc"
-
-    is_quiz = is_special and vraag.get("type") == "quiz"
-    tekst = vraag["tekst"] if is_special else vraag
-
+    # Vraag tonen
     st.markdown(f"### ❓ Vraag {st.session_state.vraag_index + 1} van {len(st.session_state.vragenlijst)}")
     st.markdown(
         f"<div style='background-color: {kleur}; padding: 20px; border-radius: 12px;'>"
@@ -107,10 +107,12 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         f"</div>", unsafe_allow_html=True
     )
 
+    # Quizvraag tonen
     if is_quiz:
         st.markdown("#### 🎓 Moeilijke vraag:")
         st.info(get_quizvraag())
 
+    # Volgende
     if st.button("➡️ Volgende vraag"):
         st.session_state.vraag_index += 1
         st.rerun()
@@ -120,8 +122,6 @@ else:
     st.success("🎉 Het spel is afgelopen! Vergeet niet wat water te drinken 😉")
     st.balloons()
     if st.button("🔁 Opnieuw beginnen"):
-        st.session_state.spelgestart = False
-        st.session_state.vraag_index = 0
-        st.session_state.vragenlijst = []
-        st.session_state.actieve_specials = []
+        for key in ["vraag_index", "spelgestart", "vragenlijst", "actieve_specials"]:
+            st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else []
         st.rerun()
