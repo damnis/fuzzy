@@ -3,7 +3,7 @@ import random
 
 from spelers import get_spelers
 from vragen_random import genereer_random_vraag
-from specials import vaste_specials, genereer_special
+from specials import genereer_special
 from quiz import get_quizvraag
 
 # --- Configuratie ---
