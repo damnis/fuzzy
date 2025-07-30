@@ -57,6 +57,10 @@ if not st.session_state.spelgestart:
 elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
 
+    if "gestarte_special_uids" not in st.session_state:
+    st.session_state.gestarte_special_uids = []
+
+
     # Actieve specials updaten
     nieuwe_actieve_specials = []
     for s in st.session_state.actieve_specials:
@@ -72,7 +76,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if st.session_state.actieve_specials:
         st.markdown("### ⚠️ Actieve specials:")
         for s in st.session_state.actieve_specials:
-            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != +1 else ''} over)")
+            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
 
     # Vraagdata
     is_special = isinstance(vraag, dict)
@@ -111,17 +115,17 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
 
     # ➡️ Volgende knop
     if st.button("➡️ Volgende vraag"):
-        # Voeg special toe indien nog niet aanwezig
-        if is_meermaals and uid:
-            bestaande_uids = [s["uid"] for s in st.session_state.actieve_specials]
-            if uid not in bestaande_uids:
-                nieuwe_special = vraag.copy()
-                nieuwe_special["actief"] = False
-                nieuwe_special["rondes"] += 0
-                st.session_state.actieve_specials.append(nieuwe_special)
-
+        # Voeg special toe indien nog niet gestart (via aparte lijst)
+        if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
+            nieuwe_special = vraag.copy()
+            nieuwe_special["actief"] = False
+            nieuwe_special["rondes"] += 1
+            st.session_state.actieve_specials.append(nieuwe_special)
+            st.session_state.gestarte_special_uids.append(uid)
+    
         st.session_state.vraag_index += 1
         st.rerun()
+    
 
 
 
