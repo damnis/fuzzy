@@ -57,51 +57,43 @@ if not st.session_state.spelgestart:
 elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
 
-    # Specials aftellen (pas na eerste activatie)
+    # Actieve specials updaten
+    nieuwe_actieve_specials = []
     for s in st.session_state.actieve_specials:
         if s.get("actief", False):
             s["rondes"] -= 1
         else:
-            s["actief"] = True
-    st.session_state.actieve_specials = [s for s in st.session_state.actieve_specials if s["rondes"] > 0]
+            s["actief"] = True  # pas vanaf volgende beurt aftellen
+        if s["rondes"] > 0:
+            nieuwe_actieve_specials.append(s)
+    st.session_state.actieve_specials = nieuwe_actieve_specials
 
-    # Actieve specials tonen
+    # Toon actieve specials
     if st.session_state.actieve_specials:
         st.markdown("### ⚠️ Actieve specials:")
         for s in st.session_state.actieve_specials:
             st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
 
-    # Vraaggegevens ophalen
+    # Vraagdata
     is_special = isinstance(vraag, dict)
     tekst = vraag["tekst"] if is_special else vraag
     is_quiz = is_special and vraag.get("type") == "quiz"
     is_meermaals = is_special and vraag.get("rondes", 0) > 0
-
-    # Nieuwe special activeren, maar pas NA het tonen
-    if is_meermaals:
-        bestaande_uids = [s["uid"] for s in st.session_state.actieve_specials if "uid" in s]
-        if vraag.get("uid") not in bestaande_uids:
-            def voeg_special_toe_later():
-                special = vraag.copy()
-                special["actief"] = False
-                special["rondes"] += 1  # correctie: pas aftellen vanaf volgende beurt
-                st.session_state.actieve_specials.append(special)
-            st.session_state["voeg_special_toe"] = voeg_special_toe_later
-
+    uid = vraag.get("uid") if is_special else None
 
     # Slokken
     slok = random.choices([1, 2, 3], weights=[0.4, 0.4, 0.2])[0]
     mult = random.choices([1, 2, 3], weights=[0.5, 0.4, 0.1])[0]
     totaal = slok * mult
 
-    # Kleuren
-    kleur = "#d9ead3"  # groen
+    # Kleur
+    kleur = "#d9ead3"
     if totaal >= 7:
-        kleur = "#ffcccc"  # rood
+        kleur = "#ffcccc"
     elif totaal >= 4:
-        kleur = "#fff2cc"  # geel
+        kleur = "#fff2cc"
     if is_special:
-        kleur = "#d0c3fc"  # paarsblauw
+        kleur = "#d0c3fc"
 
     # Vraag tonen
     st.markdown(f"### ❓ Vraag {st.session_state.vraag_index + 1} van {len(st.session_state.vragenlijst)}")
@@ -112,22 +104,24 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         f"</div>", unsafe_allow_html=True
     )
 
-    # Quizvraag tonen
     if is_quiz:
         st.markdown("#### 🎓 Moeilijke vraag:")
         st.info(get_quizvraag())
 
-    # Volgende
-#    if st.button("➡️ Volgende vraag"):
- #       st.session_state.vraag_index += 1
-  #      st.rerun()
-
+    # ➡️ Volgende knop
     if st.button("➡️ Volgende vraag"):
-        if "voeg_special_toe" in st.session_state:
-            st.session_state["voeg_special_toe"]()
-            del st.session_state["voeg_special_toe"]
+        # Voeg special toe indien nog niet aanwezig
+        if is_meermaals and uid:
+            bestaande_uids = [s["uid"] for s in st.session_state.actieve_specials]
+            if uid not in bestaande_uids:
+                nieuwe_special = vraag.copy()
+                nieuwe_special["actief"] = False
+                nieuwe_special["rondes"] += 1
+                st.session_state.actieve_specials.append(nieuwe_special)
+
         st.session_state.vraag_index += 1
         st.rerun()
+
 
 
 # Einde
