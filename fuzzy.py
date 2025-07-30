@@ -77,19 +77,21 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     is_quiz = is_special and vraag.get("type") == "quiz"
     is_meermaals = is_special and vraag.get("rondes", 0) > 0
 
-    # Nieuwe special activeren (uniek per uid)
+    # Nieuwe special activeren, maar pas NA het tonen
     if is_meermaals:
-        bestaande_uids = [s["uid"] for s in st.session_state.actieve_specials if "uid" in s]
-        if vraag.get("uid") not in bestaande_uids:
-            special = vraag.copy()
-            special["actief"] = False
-            special["rondes"] += 1  # pas aftellen vanaf volgende beurt
-            st.session_state.actieve_specials.append(special)
-
+        def voeg_special_toe_later():
+            bestaande_uids = [s["uid"] for s in st.session_state.actieve_specials if "uid" in s]
+            if vraag.get("uid") not in bestaande_uids:
+                special = vraag.copy()
+                special["actief"] = False
+                special["rondes"] += 1  # correctie: eerste beurt telt nog niet af
+                st.session_state.actieve_specials.append(special)
+        st.session_state["voeg_special_toe"] = voeg_special_toe_later
+    
 
     # Slokken
-    slok = random.choices([1, 2, 3], weights=[0.5, 0.3, 0.2])[0]
-    mult = random.choices([1, 2, 3], weights=[0.5, 0.3, 0.2])[0]
+    slok = random.choices([1, 2, 3], weights=[0.4, 0.4, 0.2])[0]
+    mult = random.choices([1, 2, 3], weights=[0.5, 0.4, 0.1])[0]
     totaal = slok * mult
 
     # Kleuren
@@ -116,9 +118,17 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.info(get_quizvraag())
 
     # Volgende
+#    if st.button("➡️ Volgende vraag"):
+ #       st.session_state.vraag_index += 1
+  #      st.rerun()
+
     if st.button("➡️ Volgende vraag"):
+        if "voeg_special_toe" in st.session_state:
+            st.session_state["voeg_special_toe"]()
+            del st.session_state["voeg_special_toe"]
         st.session_state.vraag_index += 1
         st.rerun()
+
 
 # Einde
 else:
