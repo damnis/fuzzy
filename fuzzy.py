@@ -77,12 +77,15 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     is_quiz = is_special and vraag.get("type") == "quiz"
     is_meermaals = is_special and vraag.get("rondes", 0) > 0
 
-    # Nieuwe special activeren?
-    if is_meermaals and vraag not in st.session_state.actieve_specials:
-        special = vraag.copy()
-        special["actief"] = False  # wordt pas aftellen vanaf volgende ronde
-        special["rondes"] += 1     # correctie: pas volgende beurt aftellen
-        st.session_state.actieve_specials.append(special)
+    # Nieuwe special activeren (uniek per uid)
+    if is_meermaals:
+        bestaande_uids = [s["uid"] for s in st.session_state.actieve_specials if "uid" in s]
+        if vraag.get("uid") not in bestaande_uids:
+            special = vraag.copy()
+            special["actief"] = False
+            special["rondes"] += 1  # pas aftellen vanaf volgende beurt
+            st.session_state.actieve_specials.append(special)
+
 
     # Slokken
     slok = random.choices([1, 2, 3], weights=[0.5, 0.3, 0.2])[0]
