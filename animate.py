@@ -1,40 +1,93 @@
 import streamlit as st
+import random
 import time
 
-# 🎆 Bliksemflits
 def show_bliksem():
-    for _ in range(3):
-        st.markdown("""
-        <div style='position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-             background: white; opacity: 0.7; z-index: 9999;'>
-        </div>""", unsafe_allow_html=True)
-        time.sleep(0.1)
-        st.markdown("""
-        <div style='position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-             background: none; z-index: 9999;'>
-        </div>""", unsafe_allow_html=True)
-        time.sleep(0.1)
+    st.markdown("""
+    <style>
+    body::after {
+        content: "";
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: white;
+        animation: flits 0.2s ease-in-out;
+        z-index: 9999;
+    }
+    @keyframes flits {
+        0% { opacity: 0; }
+        50% { opacity: 0.9; }
+        100% { opacity: 0; }
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# 👾 Hacker Mode
+def show_vlammen():
+    st.markdown("""
+    <style>
+    body {
+        background: linear-gradient(to top, #ff6600 0%, #ffcc00 100%) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+def show_rook():
+    st.markdown("""
+    <style>
+    body::before {
+        content: "";
+        position: fixed;
+        width: 100vw; height: 100vh;
+        background: url('https://i.imgur.com/8z9P6U3.gif') center center / cover no-repeat;
+        opacity: 0.3;
+        z-index: 1000;
+        pointer-events: none;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+def show_glitch():
+    st.markdown("""
+    <style>
+    html {
+        animation: glitchy 0.5s steps(2, end) infinite;
+    }
+    @keyframes glitchy {
+        0% { transform: translate(0px, 0px); }
+        20% { transform: translate(-2px, 2px); }
+        40% { transform: translate(2px, -2px); }
+        60% { transform: translate(-1px, 1px); }
+        80% { transform: translate(1px, -1px); }
+        100% { transform: translate(0px, 0px); }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 def hacker_effect():
     st.markdown("""
     <style>
-    html, body, [class*="css"]  {
-        background-color: black !important;
-        color: lime !important;
+    body {
+        background-color: #000000 !important;
+        color: #00ff00 !important;
+        font-family: monospace !important;
     }
     </style>
-    <div style='color: lime;'>👾 Hacker attack... alles is gehackt!</div>
     """, unsafe_allow_html=True)
 
-# 🔁 Rotatie-effect (alleen waarschuwing)
 def rotate_warning():
-    st.warning("⚠️ App-rotatie niet ondersteund. Draai je hoofd even om voor de grap!")
-
-# ⏳ Timer
-def run_timer(seconds=30):
-    timer_placeholder = st.empty()
-    for i in range(seconds, 0, -1):
-        timer_placeholder.markdown(f"⏳ Tijd over: **{i}** seconden")
-        time.sleep(1)
-    timer_placeholder.markdown("⏰ Tijd is om!")
+    st.markdown("""
+    <style>
+    html {
+        transform: rotate(180deg);
+        transition: transform 0.5s ease-in-out;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    time.sleep(2)
+    st.markdown("""
+    <style>
+    html {
+        transform: rotate(0deg);
+    }
+    </style>
+    """, unsafe_allow_html=True)
