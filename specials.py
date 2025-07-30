@@ -35,7 +35,14 @@ def init_specials(speler=None, andere=None):
             "speler": None,
             "uid": random.randint(100000, 999999)
         },
-
+        {
+            "type": "opdracht",
+            "tekst": "🎭 OPDRACHT: 5x opdrukken of slokken nemen 🗣️",
+            "rondes": 0,
+            "speler": None,
+            "uid": random.randint(100000, 999999)
+        },
+        
         # --- KIEZERSDILEMMA'S ---
         {
             "type": "stem",
