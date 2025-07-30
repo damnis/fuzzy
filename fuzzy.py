@@ -48,6 +48,8 @@ if not st.session_state.spelgestart:
         else:
             standaard = load_standaard_vragen()
             vragen = []
+            st.session_state.spelers = spelers
+
 
             while len(vragen) < aantal_vragen:
                 keuze = random.choice(["standaard", "random", "special"])
@@ -66,7 +68,7 @@ if not st.session_state.spelgestart:
             st.session_state.actieve_specials = []
             st.session_state.gestarte_special_uids = []
             st.session_state.aftel_trigger = True
-            st.session_state.spelers = spelers
+ #           st.session_state.spelers = spelers
             st.session_state.spelgestart = True
             st.rerun()
 
