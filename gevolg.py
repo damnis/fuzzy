@@ -7,12 +7,12 @@ GEVOLG_VRAGEN = [
     {
         "vraag": "Kies kop of munt, verliezers drinken",
         "type": "actie",
-        "gevolg": lambda speler=None, andere=None: st.success(f"🎲 Muntstuk valt op: {random.choice(['Kop', 'Munt'])}!")
+        "gevolg": lambda speler=None, andere=None: st.button("🎲 Doe de worp!") and st.success(f"🎲 Muntstuk valt op: {random.choice(['Kop', 'Munt'])}!")
     },
     {
         "vraag": "Wie heeft het meeste geld op zak (contant)?",
         "type": "actie",
-        "gevolg": lambda speler=None, andere=None: st.warning("💸 De rijkste geeft een rondje! Alle anderen drinken.")
+        "gevolg": lambda speler=None, andere=None: st.button("💰 Bekijk resultaat") and st.warning("💸 De rijkste geeft een rondje! Alle anderen drinken.")
     },
     {
         "vraag": "De kleinste speler neemt de slokken",
