@@ -118,7 +118,7 @@ def play_random_effect(spelers=None):
         show_balloons,
         show_sneeuw,
         lambda: show_big_popup(spelers),
-        lambda: show_popup(spelers),
+  #      lambda: show_popup(spelers),
         show_scare,
         lambda: show_fun()
     ]
