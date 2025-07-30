@@ -1,5 +1,8 @@
 import streamlit as st
 import random
+from spelers import get_spelers
+from vragen_random import genereer_random_vraag
+
 
 st.set_page_config(page_title="🍻 Drankspel", layout="centered")
 
