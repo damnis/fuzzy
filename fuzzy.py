@@ -7,6 +7,8 @@ from vragen_random import genereer_random_vraag
 from specials import genereer_special
 from quiz import toon_quiz_met_antwoord
 from animate import play_random_effect
+from gevolg import genereer_gevolg_vraag, plan_gevolg, verwerk_gevolgen, toon_gevolg
+
 
 # Pagina setup
 st.set_page_config(page_title="🍻 Fuzzy Drankspel", layout="centered")
@@ -68,7 +70,6 @@ if not st.session_state.spelgestart:
             st.session_state.actieve_specials = []
             st.session_state.gestarte_special_uids = []
             st.session_state.aftel_trigger = True
- #           st.session_state.spelers = spelers
             st.session_state.spelgestart = True
             st.rerun()
 
@@ -117,13 +118,6 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     is_quiz = is_special and vraag.get("type") == "quiz"
     is_meermaals = is_special and vraag.get("rondes", 0) > 0
 
-    # Special toevoegen indien nog niet gestart
-#    if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
-#        nieuwe_special = vraag.copy()
-#        nieuwe_special["actief"] = False
-#        nieuwe_special["rondes"] += 0
-#        st.session_state.actieve_specials.append(nieuwe_special)
-#        st.session_state.gestarte_special_uids.append(uid)
 
     # Slokkenlogica
     slok = random.choices([1, 2, 3], weights=[0.4, 0.4, 0.2])[0]
@@ -156,10 +150,6 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         toon_quiz_met_antwoord()
 
     
-#    if is_quiz:
-#        st.markdown("#### 🎓 Moeilijke vraag:")
-#        st.info(get_quizvraag())
-
     if st.session_state.animatie_mode and random.randint(1, 3) == 1:
         play_random_effect(st.session_state.spelers)
 
