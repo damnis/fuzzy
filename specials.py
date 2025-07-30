@@ -48,7 +48,7 @@ def init_specials(speler=None, andere=None):
             "type": "stem",
             "tekst": f"🎭 KIES: Is {speler} sterker dan {andere}? Minste stemmen drinken (gelijkspel = iedereen drinkt) 💪",
             "rondes": 1,
-            "speler": None
+            "speler": None,
             "uid": random.randint(100000, 999999)
         },
 
