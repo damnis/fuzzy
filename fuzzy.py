@@ -66,6 +66,7 @@ if not st.session_state.spelgestart:
             st.session_state.actieve_specials = []
             st.session_state.gestarte_special_uids = []
             st.session_state.aftel_trigger = True
+            st.session_state.spelers = spelers
             st.session_state.spelgestart = True
             st.rerun()
 
@@ -132,9 +133,11 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.markdown("#### 🎓 Moeilijke vraag:")
         st.info(get_quizvraag())
 
+    if st.session_state.animatie_mode and random.randint(1, 3) == 1:
+        play_random_effect(st.session_state.spelers)
 
-    if random.randint(1, 3) == 1:
-        play_random_effect()
+#    if random.randint(1, 3) == 1:
+ #       play_random_effect()
 
 
     if st.button("➡️ Volgende vraag"):
