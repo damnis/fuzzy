@@ -48,7 +48,16 @@ if not st.session_state.spelgestart:
             vragen = []
             vragen += random.sample(load_standaard_vragen(), min(n_standaard, len(load_standaard_vragen())))
             vragen += [genereer_random_vraag(spelers) for _ in range(n_random)]
-            vragen += [genereer_special(spelers) for _ in range(n_specials)]
+            new_specials = [genereer_special(spelers) for _ in range(n_specials)]
+            vragen += new_specials
+            st.session_state.actieve_specials = []  # reset
+            # Voor specials met duur > 1, voeg ze toe aan actieve lijst (maar zet 'actief' nog op False)
+            for s in new_specials:
+                if isinstance(s, dict) and s.get("rondes", 0) >= 1:
+                    s["actief"] = False
+                    st.session_state.actieve_specials.append(s)
+
+   #         vragen += [genereer_special(spelers) for _ in range(n_specials)]
 
             random.shuffle(vragen)
             st.session_state.vragenlijst = vragen
@@ -62,9 +71,16 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     spelers = st.session_state.spelers
 
     # ❗ Specials bijwerken (aftellen)
+    # Aftellen bestaande specials (maar sla eerste ronde over)
     for s in st.session_state.actieve_specials:
-        s["rondes"] -= 1
+        if s.get("actief", False):  # alleen aftellen als al actief
+            s["rondes"] -= 1
+        else:
+            s["actief"] = True  # activeer hem vanaf nu
+    
+    # Verwijder specials met 0 rondes
     st.session_state.actieve_specials = [s for s in st.session_state.actieve_specials if s["rondes"] > 0]
+
 
     # ⚠️ Toon actieve specials
     if st.session_state.actieve_specials:
