@@ -39,6 +39,7 @@ def genereer_random_vraag(spelers):
         f"{speler}, geef de persoon rechts van je een schop(je) of drink",
         f"{speler} en {andere} moeten tegelijk drinken",
         land_vraag,
+        games_vraag,
         f"{speler}, wijs 2 mensen aan die moeten drinken",
         f"Wie het laatst op vakantie is geweest, drinkt",
         f"{speler} moet iedereen een bijnaam geven, of dubbele slokken drink"
