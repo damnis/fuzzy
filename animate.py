@@ -10,8 +10,27 @@ def show_balloons():
 def show_sneeuw():
     st.snow()
 
-def show_popup(message="Chaos incoming!", icon="🎉"):
-    st.toast(f"{icon} {message}")
+def show_popup(spelers=None):
+    berichten = [
+        "Chaos incoming!",
+        "Laat je drankje niet vallen!",
+        "{speler} morste bijna alles...",
+        "{andere} lijkt nu al zat...",
+        "Iemand moet de kamer luchten!",
+        "Gekke vibes incoming!",
+        "{speler} en {andere} moeten elkaar aankijken zonder te lachen",
+        "Er hangt onweer in de lucht...",
+        "Wie gooide er met chips?!"
+    ]
+    iconen = ["🎉", "⚡", "😱", "😂", "🔥", "🍻", "🌀"]
+    speler = random.choice(spelers) if spelers else "iemand"
+    andere = random.choice([s for s in spelers if s != speler]) if spelers and len(spelers) > 1 else "een ander"
+
+    bericht = random.choice(berichten).format(speler=speler, andere=andere)
+    icoon = random.choice(iconen)
+    st.toast(f"{icoon} {bericht}")
+
+
 
 # 😱 Korte scare afbeelding (heel even zichtbaar)
 def show_scare():
