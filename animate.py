@@ -16,9 +16,9 @@ def show_popup(message="Chaos incoming!", icon="🎉"):
 # 😱 Korte scare afbeelding (heel even zichtbaar)
 def show_scare():
     scares = [
-        "https://i.imgur.com/OYVpe2W.gif",
-        "https://i.imgur.com/EzXrSk2.gif",
-        "https://i.imgur.com/lYgxA1M.gif"
+        "https://images.app.goo.gl/WSGngUHBRqZPp96F7",
+        "https://images.app.goo.gl/DHamEivoTZKtsPww9",
+        "https://images.app.goo.gl/iXiKysdqtMMc2X8D8"
     ]
     scare_url = random.choice(scares)
     st.image(scare_url, use_container_width=True)
