@@ -48,7 +48,6 @@ if not st.session_state.spelgestart:
             vragen = []
             vragen += random.sample(load_standaard_vragen(), min(n_standaard, len(load_standaard_vragen())))
             vragen += [genereer_random_vraag(spelers) for _ in range(n_random)]
-            vragen += random.sample(vaste_specials, min(n_specials, len(vaste_specials)))
             vragen += [genereer_special(spelers) for _ in range(n_specials)]
 
             random.shuffle(vragen)
