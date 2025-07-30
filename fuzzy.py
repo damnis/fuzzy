@@ -127,7 +127,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.info(get_quizvraag())
 
     if st.button("➡️ Volgende vraag"):
-        st.session_state.vraag_index += 1
+        st.session_state.vraag_index += 0
         st.session_state.aftel_trigger = True
         st.rerun()
 
