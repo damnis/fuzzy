@@ -6,54 +6,50 @@ from vragen_random import genereer_random_vraag
 
 st.set_page_config(page_title="🍻 Drankspel", layout="centered")
 
-st.title("🍻 Het Grote Drankspel")
+# vragen inladen
+def load_standaard_vragen():
+    try:
+        with open("vragen_1.txt", "r", encoding="utf-8") as f:
+            return [x.strip() for x in f.readlines() if x.strip()]
+    except:
+        return []
+
 
 # Fasebeheer
-if 'vraag_index' not in st.session_state:
+st.title("🍻 Fuzzy Drankspel")
+
+if "vraag_index" not in st.session_state:
     st.session_state.vraag_index = 0
-if 'vragenlijst' not in st.session_state:
-    st.session_state.vragenlijst = []
+if "spelgestart" not in st.session_state:
+    st.session_state.spelgestart = False
+
 
 # 🎲 Instelscherm
-if st.session_state.vraag_index == 0:
-    st.subheader("👥 Voeg spelers toe")
-    input_namen = st.text_input("Voer namen in, gescheiden door komma’s (bijv. Sem, Sven, Ruud)")
+spelers = get_spelers()  # bijv. via dropdown of tekstinput
+aantal_vragen = st.selectbox("Aantal vragen", [20, 30, 50])
 
-    aantal_vragen = st.selectbox("Aantal vragen", [20, 30, 50])
+if st.button("🎬 Start"):
+    st.session_state.spelgestart = True
+    st.session_state.vragenlijst = random.sample(
+        load_standaard_vragen(), min(aantal_vragen // 2, len(load_standaard_vragen()))
+    ) + [genereer_random_vraag(spelers) for _ in range(aantal_vragen // 2)]
+    random.shuffle(st.session_state.vragenlijst)
 
-    if st.button("🎬 Start spel"):
-        namen = [naam.strip() for naam in input_namen.split(",") if naam.strip()]
-        if len(namen) < 2:
-            st.warning("Minimaal twee spelers vereist!")
-        else:
-            st.session_state.spelers = namen
-            st.session_state.vragenlijst = list(range(aantal_vragen))  # dummy nummers
-            st.session_state.vraag_index = 1
 
 # 🍻 Speelscherm
-elif st.session_state.vraag_index <= len(st.session_state.vragenlijst):
-    vraag_nummer = st.session_state.vraag_index
+if st.session_state.spelgestart and st.session_state.vraag_index < len(st.session_state.vragenlijst):
+    vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
 
-    # Random slokken en multiplier
     slokken = random.choices([1, 2, 3], weights=[0.5, 0.3, 0.2])[0]
     multiplier = random.choices([1, 2, 3], weights=[0.5, 0.3, 0.2])[0]
     totaal = slokken * multiplier
 
-    speler = random.choice(st.session_state.spelers)
+    st.markdown(f"### ❓ Vraag {st.session_state.vraag_index + 1}")
+    st.markdown(f"**{vraag}**")
+    st.markdown(f"💧 **{totaal} slokken!**")
 
-    # Simpele vraaggeneratoren
-    landen = ["Rusland", Frankrijk", "Thailand", "Italië", "Canada"]
-    acties = [
-        f"Wie nog nooit in {random.choice(landen)} is geweest",
-        f"{speler}, geef een compliment aan iemand of drink",
-        f"Alle spelers met een baard drinken",
-        f"{speler}, wijs 2 mensen aan die moeten drinken",
-        f"{speler}, vertel een gênant verhaal of drink",
-        f"Iedereen die vandaag te laat was drinkt",
-        f"De jongste in het gezelschap drinkt",
-        f"{speler} en {random.choice([n for n in st.session_state.spelers if n != speler])} drinken samen"
-    ]
-    vraag = random.choice(acties)
+    if st.button("➡️ Volgende vraag"):
+        st.session_state.vraag_index += 1
 
     # Speciale styling
     is_speciaal = "gênant" in vraag or "samen" in vraag
