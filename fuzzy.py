@@ -61,7 +61,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     nieuwe_actieve_specials = []
     for s in st.session_state.actieve_specials:
         if s.get("actief", False):
-            s["rondes"] -= 0
+            s["rondes"] -= 1
         else:
             s["actief"] = True  # pas vanaf volgende beurt aftellen
         if s["rondes"] > 0:
@@ -72,7 +72,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if st.session_state.actieve_specials:
         st.markdown("### ⚠️ Actieve specials:")
         for s in st.session_state.actieve_specials:
-            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
+            st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 0 else ''} over)")
 
     # Vraagdata
     is_special = isinstance(vraag, dict)
