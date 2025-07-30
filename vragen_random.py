@@ -23,8 +23,8 @@ def genereer_random_vraag(spelers):
 
     try:
         land_vraag = random.choice(acties_met_landen).format(random.choice(landen))
-    except:
-        land_vraag = "Iedereen die ooit op vakantie is geweest drinkt"
+ #   except:
+  #      land_vraag = "Iedereen die ooit op vakantie is geweest drinkt"
 
     try:
         games_vraag = random.choice(acties_met_games).format(random.choice(games))
