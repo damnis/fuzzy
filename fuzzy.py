@@ -100,7 +100,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
         nieuwe_special = vraag.copy()
         nieuwe_special["actief"] = False
-        nieuwe_special["rondes"] += 0
+        nieuwe_special["rondes"] += 1
         st.session_state.actieve_specials.append(nieuwe_special)
         st.session_state.gestarte_special_uids.append(uid)
 
