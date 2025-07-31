@@ -106,6 +106,11 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     # Vraaginfo
     is_special = isinstance(vraag, dict)
     tekst = vraag["tekst"] if is_special else vraag
+    # Toon actieknop voor gevolgvragen als nodig
+    if is_special and vraag.get("toon_actie_knop"):
+        if st.button(vraag["actie_knop"]):
+            plan_gevolg(vraag)
+
     uid = vraag.get("uid") if is_special else None
     is_quiz = is_special and vraag.get("type") == "quiz"
     is_meermaals = is_special and vraag.get("rondes", 0) > 0
