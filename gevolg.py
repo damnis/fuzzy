@@ -21,18 +21,18 @@ GEVOLG_VRAGEN = [
         "vraag": "Kies kop of munt, verliezers drinken",
         "type": "actie",
         "gevolg": lambda speler=None, andere=None: (
-            speel_geluid("laugh") if st.button("🎲 Doe de worp!") else None
+            speel_geluid("laugh") if st.button("🎲 Doe de worp!", key="worp_knop") else None
         ) or (
-            st.success(f"🎲 Muntstuk valt op: {random.choice(['Kop', 'Munt'])}!") if st.session_state.get("__worp_knop_ingedrukt__") else st.session_state.update({"__worp_knop_ingedrukt__": True})
+            st.success(f"🎲 Muntstuk valt op: {random.choice(['Kop', 'Munt'])}!")
         )
     },
     {
         "vraag": "Wie heeft het meeste geld op zak (contant)?",
         "type": "actie",
         "gevolg": lambda speler=None, andere=None: (
-            speel_geluid("laugh") if st.button("💰 Bekijk resultaat") else None
+            speel_geluid("laugh") if st.button("💰 Bekijk resultaat", key="geld_knop") else None
         ) or (
-            st.warning("💸 De rijkste geeft een rondje! Alle anderen drinken.") if st.session_state.get("__geld_knop_ingedrukt__") else st.session_state.update({"__geld_knop_ingedrukt__": True})
+            st.warning("💸 De rijkste geeft een rondje! Alle anderen drinken.")
         )
     },
     {
@@ -59,10 +59,13 @@ def plan_gevolg(vraag_item):
         else:
             rondes = vraag_item.get("rondes_later", 2)
 
+        uid = vraag_item.get("uid", f"gevolg_{hash(vraag_item['vraag']) % 100000}")
+        vraag_item["uid"] = uid
+
         gevolg = {
             "rondes": rondes,
             "tekst": vraag_item.get("gevolg_tekst"),
-            "uid": f"gevolg_{random.randint(1000, 9999)}"
+            "uid": uid
         }
 
         if "actieve_gevolgen" not in st.session_state:
@@ -70,9 +73,9 @@ def plan_gevolg(vraag_item):
         if "geplande_gevolgen_uids" not in st.session_state:
             st.session_state.geplande_gevolgen_uids = set()
 
-        if gevolg["uid"] not in st.session_state.geplande_gevolgen_uids:
+        if uid not in st.session_state.geplande_gevolgen_uids:
             st.session_state.actieve_gevolgen.append(gevolg)
-            st.session_state.geplande_gevolgen_uids.add(gevolg["uid"])
+            st.session_state.geplande_gevolgen_uids.add(uid)
             speel_geluid("laugh")
 
 # Tel actieve gevolgen af en toon indien nodig
@@ -103,10 +106,8 @@ def genereer_gevolg_vraag(spelers):
     vraag_item["andere"] = andere
 
     if vraag_item.get("type") == "uitgesteld" and "actie_knop" in vraag_item:
-        vraag_item["toon_actie_knop"] = True
-
-  
-#    vraag_item["toon_actie_knop"] = True if vraag_item.get("type") == "uitgesteld" and "actie_knop" in vraag_item else False
-
+        uid = f"gevolg_{hash(vraag_item['vraag']) % 100000}"
+        vraag_item["uid"] = uid
+        vraag_item["toon_actie_knop"] = uid not in st.session_state.get("geplande_gevolgen_uids", set())
 
     return vraag_item
