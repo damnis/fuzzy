@@ -15,34 +15,40 @@ def speel_geluid(sound):
             height=0,
         )
 
+# Concrete gevolg-acties
+
+def kop_of_munt_gevolg():
+    if st.button("🎲 Doe de worp!", key="worp_knop"):
+        resultaat = random.choice(["Kop", "Munt"])
+        speel_geluid("laugh")
+        st.success(f"🎲 Muntstuk valt op: {resultaat}!")
+
+def geld_op_zak_gevolg():
+    if st.button("💰 Bekijk resultaat", key="geld_knop"):
+        speel_geluid("laugh")
+        st.warning("💸 De rijkste geeft een rondje! Alle anderen drinken.")
+
+def kleinste_speler_gevolg():
+    if st.button("👶 Bekijk resultaat", key="kleinste_knop"):
+        speel_geluid("laugh")
+        st.warning("👶 De kleinste speler moet drinken!")
+
 # Voorbeelden van gevolgvragen met opvolgende acties
 GEVOLG_VRAGEN = [
     {
         "vraag": "Kies kop of munt, verliezers drinken",
         "type": "actie",
-        "gevolg": lambda speler=None, andere=None: (
-            speel_geluid("laugh") if st.button("🎲 Doe de worp!", key="worp_knop") else None
-        ) or (
-            st.success(f"🎲 Muntstuk valt op: {random.choice(['Kop', 'Munt'])}!")
-        )
+        "gevolg": lambda speler=None, andere=None: kop_of_munt_gevolg()
     },
     {
         "vraag": "Wie heeft het meeste geld op zak (contant)?",
         "type": "actie",
-        "gevolg": lambda speler=None, andere=None: (
-            speel_geluid("laugh") if st.button("💰 Bekijk resultaat", key="geld_knop") else None
-        ) or (
-            st.warning("💸 De rijkste geeft een rondje! Alle anderen drinken.")
-        )
+        "gevolg": lambda speler=None, andere=None: geld_op_zak_gevolg()
     },
     {
         "vraag": "Wie is de kleinste speler?",
         "type": "actie",
-        "gevolg": lambda speler=None, andere=None: (
-            speel_geluid("laugh") if st.button("👶 Bekijk resultaat", key="kleinste_knop") else None
-        ) or (
-            st.warning("👶 De kleinste speler moet drinken!")
-        ),
+        "gevolg": lambda speler=None, andere=None: kleinste_speler_gevolg(),
         "type_uitgesteld": True,
         "rondes_later": lambda: random.randint(2, 5),
         "gevolg_tekst": "ACTIE: Kleintjes worden groot!  De kleinste speler mag 1x dubbele slokken uitdelen bij de volgende ronde."
