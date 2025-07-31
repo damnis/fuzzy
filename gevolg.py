@@ -102,8 +102,11 @@ def genereer_gevolg_vraag(spelers):
     vraag_item["speler"] = speler
     vraag_item["andere"] = andere
 
+    if vraag_item.get("type") == "uitgesteld" and "actie_knop" in vraag_item:
+    vraag_item["toon_actie_knop"] = True
+
   
-    vraag_item["toon_actie_knop"] = True if vraag_item.get("type") == "uitgesteld" and "actie_knop" in vraag_item else False
+#    vraag_item["toon_actie_knop"] = True if vraag_item.get("type") == "uitgesteld" and "actie_knop" in vraag_item else False
 
 
     return vraag_item
