@@ -23,7 +23,8 @@ for key, default in {
     "aftel_trigger": False,
     "animatie_mode": False,
     "actieve_gevolgen": [],
-    "geplande_gevolgen_uids": set()
+    "geplande_gevolgen_uids": set(),
+    "laatste_was_quiz": False
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
@@ -74,6 +75,7 @@ if not st.session_state.spelgestart:
             st.session_state.actieve_gevolgen = []
             st.session_state.geplande_gevolgen_uids = set()
             st.session_state.spelgestart = True
+            st.session_state.laatste_was_quiz = False
             st.rerun()
 
 # Spelbeurt
@@ -95,9 +97,10 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         for special in st.session_state.actieve_specials:
             if special.get("actief", False):
                 special["rondes"] -= 1
+                if special["rondes"] > 0:
+                    nieuwe_specials.append(special)
             else:
                 special["actief"] = True
-            if special["rondes"] > 0:
                 nieuwe_specials.append(special)
         st.session_state.actieve_specials = nieuwe_specials
         st.session_state.aftel_trigger = False
@@ -108,11 +111,9 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     # Vraaginfo
     tekst = vraag["tekst"] if is_special else vraag
 
-    # Toon directe gevolgvraag
     if is_special and vraag.get("type") == "actie":
         toon_gevolg(vraag, speler=vraag.get("speler"), andere=vraag.get("andere"))
 
-    # Plan uitgestelde gevolgen
     if is_special and vraag.get("type_uitgesteld"):
         plan_gevolg(vraag)
 
@@ -143,22 +144,26 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         f"</div>", unsafe_allow_html=True
     )
 
-    # Actieve specials tonen
     if st.session_state.actieve_specials:
         st.markdown("### ⚠️ Actieve specials:")
         for s in st.session_state.actieve_specials:
             st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
 
-    if is_special and vraag.get("type") == "quiz":
+    is_quiz = is_special and vraag.get("type") == "quiz"
+    if is_quiz:
         toon_quiz_met_antwoord()
+        st.session_state.laatste_was_quiz = True
+    else:
+        st.session_state.laatste_was_quiz = False
 
     if st.session_state.animatie_mode and random.randint(1, 3) == 1:
         play_random_effect(st.session_state.spelers)
 
-    if st.button("➡️ Volgende vraag"):
-        st.session_state.vraag_index += 1
-        st.session_state.aftel_trigger = True
-        st.rerun()
+    if not st.session_state.laatste_was_quiz or (st.session_state.laatste_was_quiz and st.button("➡️ Volgende vraag")):
+        if st.button("➡️ Volgende vraag"):
+            st.session_state.vraag_index += 1
+            st.session_state.aftel_trigger = True
+            st.rerun()
 
 # Einde
 else:
@@ -167,7 +172,8 @@ else:
     if st.button("🔁 Opnieuw beginnen"):
         for key in [
             "vraag_index", "spelgestart", "vragenlijst", "actieve_specials",
-            "gestarte_special_uids", "aftel_trigger", "animatie_mode", "actieve_gevolgen", "geplande_gevolgen_uids"
+            "gestarte_special_uids", "aftel_trigger", "animatie_mode", "actieve_gevolgen",
+            "geplande_gevolgen_uids", "laatste_was_quiz"
         ]:
             st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else [] if isinstance(st.session_state[key], list) else set()
         st.rerun()
