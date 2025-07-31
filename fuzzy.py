@@ -156,13 +156,9 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     else:
         st.session_state.laatste_was_quiz = False
 
-    if st.session_state.animatie_mode and random.randint(1, 3) == 1:
-        play_random_effect(st.session_state.spelers)
+    # ❌ Fix dubbele button: maar één button call per beurt!
+    doorgaan = not st.session_state.laatste_was_quiz or st.button("➡️ Volgende vraag", key="volgende_vraag")
 
-    doorgaan = True
-    if st.session_state.laatste_was_quiz:
-        doorgaan = st.button("➡️ Volgende vraag")
-    
     if doorgaan:
         st.session_state.vraag_index += 1
         st.session_state.aftel_trigger = True
