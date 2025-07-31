@@ -24,7 +24,8 @@ for key, default in {
     "animatie_mode": False,
     "actieve_gevolgen": [],
     "geplande_gevolgen_uids": set(),
-    "laatste_was_quiz": False
+    "laatste_was_quiz": False,
+    "doorgaan_klik": False
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
@@ -156,13 +157,15 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     else:
         st.session_state.laatste_was_quiz = False
 
-    # ❌ Fix dubbele button: maar één button call per beurt!
-    doorgaan = not st.session_state.laatste_was_quiz or st.button("➡️ Volgende vraag", key="volgende_vraag")
-
-    if doorgaan:
-        st.session_state.vraag_index += 1
-        st.session_state.aftel_trigger = True
-        st.rerun()
+    # Alleen knop tonen indien niet quiz of vorige keer quiz was
+    if not st.session_state.laatste_was_quiz:
+        if st.button("➡️ Volgende vraag", key="volgende_vraag"):
+            st.session_state.vraag_index += 1
+            st.session_state.aftel_trigger = True
+            st.rerun()
+    else:
+        # Quizvraag afsluiten via knop in quiz-functie of aparte flow (optioneel)
+        pass
 
 # Einde
 else:
@@ -172,7 +175,7 @@ else:
         for key in [
             "vraag_index", "spelgestart", "vragenlijst", "actieve_specials",
             "gestarte_special_uids", "aftel_trigger", "animatie_mode", "actieve_gevolgen",
-            "geplande_gevolgen_uids", "laatste_was_quiz"
+            "geplande_gevolgen_uids", "laatste_was_quiz", "doorgaan_klik"
         ]:
             st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else [] if isinstance(st.session_state[key], list) else set()
         st.rerun()
