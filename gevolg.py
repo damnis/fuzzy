@@ -7,7 +7,7 @@ import streamlit.components.v1 as components
 def speel_geluid(sound):
     if sound == "laugh":
         components.html(
-            f"""
+            """
             <audio autoplay>
                 <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mpeg">
             </audio>
@@ -83,6 +83,7 @@ def verwerk_gevolgen():
         g["rondes"] -= 1
         if g["rondes"] == 0:
             st.markdown(f"### ⚡ {g['tekst']}")
+            speel_geluid("laugh")
         else:
             nieuwe.append(g)
     st.session_state.actieve_gevolgen = nieuwe
