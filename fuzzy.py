@@ -107,9 +107,15 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     is_special = isinstance(vraag, dict)
     tekst = vraag["tekst"] if is_special else vraag
     # Toon actieknop voor gevolgvragen als nodig
-    if is_special and vraag.get("toon_actie_knop"):
-        if st.button(vraag["actie_knop"]):
+    # 👉 Toon actieknop voor gevolgvragen als nodig
+    if is_special and vraag.get("type") == "actie":
+        toon_gevolg(vraag, speler=vraag.get("speler"), andere=vraag.get("andere"))
+    
+    # 👉 Plan latere gevolgactie indien van toepassing
+    if is_special and vraag.get("type_uitgesteld") and vraag.get("toon_actie_knop", False):
+        if st.button("🚀 Actie", key=f"gevolg_btn_{vraag.get('uid', '')}"):
             plan_gevolg(vraag)
+
 
     uid = vraag.get("uid") if is_special else None
     is_quiz = is_special and vraag.get("type") == "quiz"
