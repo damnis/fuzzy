@@ -107,15 +107,17 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     is_special = isinstance(vraag, dict)
     tekst = vraag["tekst"] if is_special else vraag
     # Toon actieknop voor gevolgvragen als nodig
-    # Gevolgvraag direct tonen (actie met knop)
-    if is_special and vraag.get("type") == "actie":
+    # Gevolgvraag met directe actie (zoals kop/munt)
+    if is_special and vraag.get("type") == "actie" and not vraag.get("type_uitgesteld", False):
         toon_gevolg(vraag, speler=vraag.get("speler"), andere=vraag.get("andere"))
-
-    # Gevolgvraag met uitgestelde actie (eenmalige knop)
-    if is_special and vraag.get("type_uitgesteld", False) and vraag.get("toon_actie_knop", False):
-        if st.button("🚀 Actie", key=f"btn_{vraag.get('uid', '')}"):
-            plan_gevolg(vraag)
-            vraag["toon_actie_knop"] = False  # de knop verdwijnt na 1x
+    
+    # Gevolgvraag met uitgestelde actie (eerst actie, later gevolg)
+    if is_special and vraag.get("type_uitgesteld", False):
+        if vraag.get("toon_actie_knop", False):
+            if st.button("🚀 Actie", key=f"btn_{vraag.get('uid', '')}"):
+                toon_gevolg(vraag, speler=vraag.get("speler"), andere=vraag.get("andere"))
+                vraag["toon_actie_knop"] = False
+                plan_gevolg(vraag)
 
 
     uid = vraag.get("uid") if is_special else None
