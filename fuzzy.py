@@ -78,16 +78,16 @@ if not st.session_state.spelgestart:
 elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
     is_special = isinstance(vraag, dict)
+    spelers = st.session_state.spelers
     uid = vraag.get("uid") if is_special else None
-    is_meermaals = is_special and vraag.get("rondes", 0) > 0
 
+    # Vervang placeholders als het een stringvraag is
     if isinstance(vraag, str) and ("{speler}" in vraag or "{andere}" in vraag):
-        spelers = st.session_state.spelers
         speler = random.choice(spelers)
         andere = random.choice([s for s in spelers if s != speler]) if len(spelers) > 1 else "iemand anders"
         vraag = vraag.format(speler=speler, andere=andere)
 
-    # Specials aftellen, 1x per beurt
+    # Specials aftellen
     if st.session_state.aftel_trigger:
         nieuwe_specials = []
         for special in st.session_state.actieve_specials:
@@ -100,39 +100,21 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.session_state.actieve_specials = nieuwe_specials
         st.session_state.aftel_trigger = False
 
-    # Gevolgen verwerken
+    # Verwerk uitgestelde gevolgen
     verwerk_gevolgen()
 
-    # Vraaginfo
-    is_special = isinstance(vraag, dict)
-    tekst = vraag["tekst"] if is_special else vraag
-    # Toon actieknop voor gevolgvragen als nodig
-    # Toon gevolgvraag indien van toepassing (toon_gevolg regelt alles intern)
+    # Toon eventueel gevolg-actie
     if is_special and vraag.get("type") == "actie":
         toon_gevolg(vraag, speler=vraag.get("speler"), andere=vraag.get("andere"))
-    
-    # Plan uitgestelde gevolgactie indien nog niet gepland
+
+    # Plan eventuele uitgestelde actie
     if is_special and vraag.get("type_uitgesteld", False):
         plan_gevolg(vraag)
-    
 
-    uid = vraag.get("uid") if is_special else None
-    is_quiz = is_special and vraag.get("type") == "quiz"
-    is_meermaals = is_special and vraag.get("rondes", 0) > 0
+    # Vraagtekst bepalen
+    tekst = vraag["tekst"] if is_special else vraag
 
-    if is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
-        nieuwe_special = vraag.copy()
-        nieuwe_special["actief"] = False
-        st.session_state.actieve_specials.append(nieuwe_special)
-        st.session_state.gestarte_special_uids.append(uid)
-
-    # Gevolgvraag uitvoeren
-    if is_special and vraag.get("type") == "actie":
-        toon_gevolg(vraag)
-    elif is_special and vraag.get("type") == "uitgesteld":
-        plan_gevolg(vraag)
-
-    # Slokkenlogica
+    # Slokken bepalen
     slok = random.choices([1, 2, 3], weights=[0.4, 0.4, 0.2])[0]
     mult = random.choices([1, 2, 3], weights=[0.5, 0.4, 0.1])[0]
     totaal = slok * mult
@@ -159,7 +141,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         for s in st.session_state.actieve_specials:
             st.markdown(f"- {s['tekst']} ({s['rondes']} ronde{'s' if s['rondes'] != 1 else ''} over)")
 
-    if is_quiz:
+    if is_special and vraag.get("type") == "quiz":
         toon_quiz_met_antwoord()
 
     if st.session_state.animatie_mode and random.randint(1, 3) == 1:
