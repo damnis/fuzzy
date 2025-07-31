@@ -22,7 +22,8 @@ for key, default in {
     "gestarte_special_uids": [],
     "aftel_trigger": False,
     "animatie_mode": False,
-    "actieve_gevolgen": []
+    "actieve_gevolgen": [],
+    "geplande_gevolgen_uids": set()
 }.items():
     if key not in st.session_state:
         st.session_state[key] = default
@@ -71,6 +72,7 @@ if not st.session_state.spelgestart:
             st.session_state.gestarte_special_uids = []
             st.session_state.aftel_trigger = True
             st.session_state.actieve_gevolgen = []
+            st.session_state.geplande_gevolgen_uids = set()
             st.session_state.spelgestart = True
             st.rerun()
 
@@ -78,16 +80,16 @@ if not st.session_state.spelgestart:
 elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     vraag = st.session_state.vragenlijst[st.session_state.vraag_index]
     is_special = isinstance(vraag, dict)
-    spelers = st.session_state.spelers
     uid = vraag.get("uid") if is_special else None
+    is_meermaals = is_special and vraag.get("rondes", 0) > 0
 
-    # Vervang placeholders als het een stringvraag is
     if isinstance(vraag, str) and ("{speler}" in vraag or "{andere}" in vraag):
+        spelers = st.session_state.spelers
         speler = random.choice(spelers)
         andere = random.choice([s for s in spelers if s != speler]) if len(spelers) > 1 else "iemand anders"
         vraag = vraag.format(speler=speler, andere=andere)
 
-    # Specials aftellen
+    # Specials aftellen, 1x per beurt
     if st.session_state.aftel_trigger:
         nieuwe_specials = []
         for special in st.session_state.actieve_specials:
@@ -100,21 +102,27 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
         st.session_state.actieve_specials = nieuwe_specials
         st.session_state.aftel_trigger = False
 
-    # Verwerk uitgestelde gevolgen
+    # Gevolgen verwerken
     verwerk_gevolgen()
 
-    # Toon eventueel gevolg-actie
+    # Vraaginfo
+    tekst = vraag["tekst"] if is_special else vraag
+
+    # Toon directe gevolgvraag
     if is_special and vraag.get("type") == "actie":
         toon_gevolg(vraag, speler=vraag.get("speler"), andere=vraag.get("andere"))
 
-    # Plan eventuele uitgestelde actie
-    if is_special and vraag.get("type_uitgesteld", False):
+    # Plan uitgestelde gevolgen
+    if is_special and vraag.get("type_uitgesteld"):
         plan_gevolg(vraag)
 
-    # Vraagtekst bepalen
-    tekst = vraag["tekst"] if is_special else vraag
+    if is_special and is_meermaals and uid and uid not in st.session_state.gestarte_special_uids:
+        nieuwe_special = vraag.copy()
+        nieuwe_special["actief"] = False
+        st.session_state.actieve_specials.append(nieuwe_special)
+        st.session_state.gestarte_special_uids.append(uid)
 
-    # Slokken bepalen
+    # Slokkenlogica
     slok = random.choices([1, 2, 3], weights=[0.4, 0.4, 0.2])[0]
     mult = random.choices([1, 2, 3], weights=[0.5, 0.4, 0.1])[0]
     totaal = slok * mult
@@ -127,7 +135,7 @@ elif st.session_state.vraag_index < len(st.session_state.vragenlijst):
     if is_special:
         kleur = "#d0c3fc"
 
-    st.markdown(f"### ❓ Vraag {st.session_state.vraag_index +1} van {len(st.session_state.vragenlijst)}")
+    st.markdown(f"### ❓ Vraag {st.session_state.vraag_index + 1} van {len(st.session_state.vragenlijst)}")
     st.markdown(
         f"<div style='background-color: {kleur}; padding: 20px; border-radius: 12px;'>"
         f"<strong>{tekst}</strong><br><br>"
@@ -159,7 +167,7 @@ else:
     if st.button("🔁 Opnieuw beginnen"):
         for key in [
             "vraag_index", "spelgestart", "vragenlijst", "actieve_specials",
-            "gestarte_special_uids", "aftel_trigger", "animatie_mode", "actieve_gevolgen"
+            "gestarte_special_uids", "aftel_trigger", "animatie_mode", "actieve_gevolgen", "geplande_gevolgen_uids"
         ]:
-            st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else []
+            st.session_state[key] = 0 if key == "vraag_index" else False if key == "spelgestart" else [] if isinstance(st.session_state[key], list) else set()
         st.rerun()
