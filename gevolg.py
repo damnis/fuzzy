@@ -37,8 +37,13 @@ GEVOLG_VRAGEN = [
     },
     {
         "vraag": "Wie is de kleinste speler?",
-        "type": "uitgesteld",
-        "actie_knop": "👶 De kleinste speler moet drinken!",
+        "type": "actie",
+        "gevolg": lambda speler=None, andere=None: (
+            speel_geluid("laugh") if st.button("👶 Bekijk resultaat", key="kleinste_knop") else None
+        ) or (
+            st.warning("👶 De kleinste speler moet drinken!")
+        ),
+        "type_uitgesteld": True,
         "rondes_later": lambda: random.randint(2, 5),
         "gevolg_tekst": "ACTIE: Kleintjes worden groot!  De kleinste speler mag 1x dubbele slokken uitdelen bij de volgende ronde."
     }
@@ -53,7 +58,7 @@ def toon_gevolg(vraag_item, speler=None, andere=None):
 # Voeg uitgesteld gevolg toe met rondeteller
 
 def plan_gevolg(vraag_item):
-    if vraag_item.get("type") == "uitgesteld":
+    if vraag_item.get("type_uitgesteld"):
         if callable(vraag_item.get("rondes_later")):
             rondes = vraag_item["rondes_later"]()
         else:
@@ -105,7 +110,7 @@ def genereer_gevolg_vraag(spelers):
     vraag_item["speler"] = speler
     vraag_item["andere"] = andere
 
-    if vraag_item.get("type") == "uitgesteld" and "actie_knop" in vraag_item:
+    if vraag_item.get("type_uitgesteld"):
         uid = f"gevolg_{hash(vraag_item['vraag']) % 100000}"
         vraag_item["uid"] = uid
         vraag_item["toon_actie_knop"] = uid not in st.session_state.get("geplande_gevolgen_uids", set())
